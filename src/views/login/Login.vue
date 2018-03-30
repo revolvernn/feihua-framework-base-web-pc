@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="form-group">
-          <button @click.prevent="doLogin" class="btn btn-primary btn-block">登录</button>
+          <el-button @click.prevent="doLogin" type="primary" class="btn-block" :loading="loading">登录</el-button>
         </div>
         <div class="form-group">
           <a href="/admin/module/login/forgetPassword.html">忘记密码了？</a>
@@ -43,8 +43,9 @@
     data () {
       return {
         msg: null,
+        loading: false,
         form: {
-          loginType: null,
+          loginType: 'ACCOUNT',
           principal: null,
           password: null,
           rememberMe: true
@@ -58,23 +59,34 @@
     methods: {
       doLogin () {
         let self = this
+        if (self.loading === true) {
+          return
+        }
+        self.loading = true
         let validator = new Schema(this.validateRules)
         validator.validate(this.form, {first: true}, (errors, fields) => {
           if (errors) {
             self.msg = errors[0].message
+            self.loading = false
             return null
           } else {
             self.msg = null
             // 进行登录
-            self.Axios.post('/api/login', self.form)
+            self.$http.post('/login', self.form)
               .then(function (response) {
-                console.log(response)
+                // 设置token
+                self.$store.commit('setToken', response.data.token)
+                // 跳转到主页面
+                self.$router.push({name: 'Main'})
+                self.loading = false
               })
               .catch(function (response) {
-                /* if (response.status === 400) {
-                  if(response.data.code === '')
-                } */
-                console.log(response)
+                if (response.response.status === 401) {
+                  self.msg = '用户名或密码错误'
+                } else {
+                  self.msg = '抱歉系统好像出问题了'
+                }
+                self.loading = false
               })
           }
         })

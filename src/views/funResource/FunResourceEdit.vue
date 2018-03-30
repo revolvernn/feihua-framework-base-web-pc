@@ -1,0 +1,193 @@
+<template>
+  <div class="wrapper">
+    <el-popover
+      ref="funResourceParentSelect"
+      placement="right"
+      trigger="click">
+      <el-scrollbar wrapStyle="max-height:500px;">
+        <funResource-tree v-on:nodeClick="parentTreeNodeClick"></funResource-tree>
+      </el-scrollbar>
+    </el-popover>
+
+    <el-form ref="form" :model="form" :rules="formRules" style="width: 460px;" label-width="100px">
+      <el-form-item label="名称" prop="name" required>
+        <el-input  v-model="form.name"></el-input>
+      </el-form-item>
+      <el-form-item label="图标" prop="icon">
+        <el-input  v-model="form.icon"></el-input>
+      </el-form-item>
+      <el-form-item label="类型" prop="type">
+        <self-dict-select v-model="form.type" type="funResource_type"></self-dict-select>
+      </el-form-item>
+      <el-form-item label="是否显示" prop="isShow" required>
+        <self-dict-select v-model="form.isShow" type="yes_no"></self-dict-select>
+      </el-form-item>
+      <el-form-item label="url">
+        <el-input  v-model="form.url"></el-input>
+      </el-form-item>
+      <el-form-item label="权限标识">
+        <el-input  v-model="form.permissions"></el-input>
+      </el-form-item>
+      <el-form-item label="显示顺序" prop="sequence">
+        <el-input-number v-model="form.sequence" :min="0" :max="1000"></el-input-number>
+      </el-form-item>
+      <el-form-item label="父级" prop="parentId">
+        <el-input  v-model="formLabel.parentIdName" :readonly="true" clearable>
+          <el-button slot="append" icon="el-icon-search" v-popover:funResourceParentSelect></el-button>
+        </el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="updateBtnClick" :loading="addLoading">修改</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+  import FunResourceTree from './FunResourceTree.vue'
+  import SelfDictSelect from '@/components/SelfDictSelect.vue'
+  import OfficeTree from '@/views/office/OfficeTree.vue'
+  export default {
+    name: 'FunResourceEdit',
+    components: {
+      OfficeTree,
+      FunResourceTree,
+      SelfDictSelect},
+    data () {
+      return {
+        // 编辑的id
+        id: null,
+        form: {
+          icon: null,
+          isShow: '',
+          name: null,
+          url: null,
+          type: '',
+          permissions: null,
+          sequence: null,
+          parentId: '0',
+          updateTime: null
+        },
+        formDataLoading: false,
+        addLoading: false,
+        formLabel: {
+          parentIdName: ''
+        },
+        formRules: {
+          name: [
+            {required: true, message: '必填', trigger: 'blur'}
+          ],
+          isShow: [
+            {required: true, message: '必填', trigger: 'blur'}
+          ],
+          type: [
+            {required: true, message: '必填', trigger: 'blur'}
+          ],
+          sequence: [
+            {required: true, message: '必填', trigger: 'blur'}
+          ]
+        }
+      }
+    },
+    mounted () {
+      this.id = this.$route.params.id
+      this.loadEditData(this.id)
+    },
+    methods: {
+      loadEditData (id) {
+        this.resetForm()
+        let self = this
+        self.formDataLoading = true
+        self.$http.get('/base/functionResource/' + self.id)
+          .then(function (response) {
+            let content = response.data.data.content
+            self.form.name = content.name
+            self.form.type = content.type
+            self.form.sequence = content.sequence
+            self.form.isShow = content.isShow
+            self.form.icon = content.icon
+            self.form.permissions = content.permissions
+            self.form.url = content.url
+            self.form.dataOfficeId = content.dataOfficeId
+            self.form.parentId = content.parentId
+            self.form.updateTime = content.updateAt
+            self.formDataLoading = false
+            return Promise.resolve({parentId: content.parentId, dataOfficeId: content.dataOfficeId})
+          }).then(p => {
+            // 父级回回显
+            if (p.parentId && p.parentId !== '0') {
+              self.$http.get('/base/functionResource/' + p.parentId).then(response => {
+                let content = response.data.data.content
+                self.formLabel.parentIdName = content.name
+              })
+            } else {
+              self.formLabel.parentIdName = null
+            }
+          }).catch(function (response) {
+            self.formDataLoading = false
+          })
+      },
+      updateBtnClick () {
+        let self = this
+        if (self.addLoading === false) {
+          this.$refs['form'].validate((valid) => {
+            if (valid) {
+              // 请求添加
+              self.addLoading = true
+              self.$http.put('/base/functionResource/' + self.id, self.form)
+                .then(function (response) {
+                  self.$message.info('功能资源修改成功')
+                  self.addLoading = false
+                })
+                .catch(function (response) {
+                  if (response.response.status === 404) {
+                    self.$message.error('功能资源修改失败，数据不存在或已被他人修改，请刷新列表后再试')
+                  }
+                  self.addLoading = false
+                })
+            } else {
+              return false
+            }
+          })
+        } else {
+          self.$message.info('正在请求中，请耐心等待')
+        }
+      },
+      parentTreeNodeClick (data) {
+        this.form.parentId = data.id
+        this.formLabel.parentIdName = data.name
+      },
+      officeTreeNodeClick (data) {
+        this.form.dataOfficeId = data.id
+      },
+      resetForm () {
+        this.$refs['form'].resetFields()
+        this.formLabel.parentIdName = null
+      }
+    },
+    watch: {
+      formLabel (value) {
+        if (value.parentIdName === '') {
+          this.form.parentId = ''
+        }
+      }
+    },
+    // tab切换如果参数不一样，重新加载数据
+    beforeRouteEnter  (to, from, next) {
+      next(vm => {
+        // 通过 `vm` 访问组件实例
+        if (vm.id !== vm.$route.params.id) {
+          vm.id = vm.$route.params.id
+          vm.loadEditData(vm.id)
+        }
+      })
+    }
+  }
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+  .wrapper{
+    padding:1.5rem;
+  }
+</style>

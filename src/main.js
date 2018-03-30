@@ -3,15 +3,24 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import Axios from 'axios'
+import http from '@/utils/httpUtils.js'
+import store from './store/store'
+import Element from 'element-ui'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'normalize.css/normalize.css'
+import 'element-ui/lib/theme-chalk/index.css'
+import config from '@/utils/config.js'
+Vue.use(Element)
 
-Vue.prototype.Axios = Axios
+Vue.prototype.$http = http
+Vue.prototype.$config = config
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })

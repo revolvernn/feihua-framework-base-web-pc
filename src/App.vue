@@ -4,7 +4,6 @@
   </div>
 </template>
 <script>
-  import 'bootstrap/dist/css/bootstrap.min.css'
   export default {
     name: 'app'
   }
@@ -18,8 +17,5 @@
   html {
     font-size: 100%;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
-  .form-validate-msg{
-
   }
 </style>
