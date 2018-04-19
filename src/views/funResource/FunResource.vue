@@ -102,6 +102,7 @@
           }
         ],
         page: {
+          pageNo: 1,
           dataNum: 0
         },
         // 表格数据
@@ -137,10 +138,17 @@
         this.loadTableData(1)
       },
       // 加载表格数据
-      loadTableData (pageNo) {
+      loadTableData (pageNo, pageNoChange) {
         let self = this
-        if (pageNo) {
-          self.searchFormModel.pageNo = pageNo
+        if (pageNo > 0) {
+          if (pageNoChange) {
+            self.searchFormModel.pageNo = pageNo
+          } else {
+            if (self.page.pageNo !== pageNo) {
+              self.page.pageNo = pageNo
+              return
+            }
+          }
         }
         self.tableLoading = true
         this.$http.get('/base/functionResources', self.searchFormModel)
@@ -165,7 +173,8 @@
       },
       // 页码改变加载对应页码数据
       pageNoChange (val) {
-        this.loadTableData(val)
+        this.page.pageNo = val
+        this.loadTableData(val, true)
       },
       // tablb 表格编辑行
       editTableRowClick (index, row) {

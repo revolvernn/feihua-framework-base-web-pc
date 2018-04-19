@@ -6,39 +6,30 @@ import { Message } from 'element-ui'
 let baseURL = process.env.NODE_ENV === 'production' ? '' : '/api'
 
 Axios.defaults.baseURL = baseURL
+/**
+ * 定义一下不提示消息的对象
+ * @type 404: ['E404_000001']
+ */
+let noneMessageStatus = {
+  404: []
+}
 
 function handlerError (status, code) {
-  switch (status) {
-    case 404:
-      /* let msg404 = getMsg(status, code)
-      if (msg404) {
-        Message.error(msg404)
-      } */
-      break
-    case 401:
-      let msg401 = getMsg(status, code)
-      if (msg401) {
-        Message.error(msg401)
+  let statusObj = noneMessageStatus[status]
+  if (statusObj) {
+    if (statusObj.length === 0) {
+      return
+    } else {
+      for (let obj in statusObj) {
+        if (obj === code) {
+          return
+        }
       }
-      break
-    case 403:
-      let msg403 = getMsg(status, code)
-      if (msg403) {
-        Message.error(msg403)
-      }
-      break
-    case 409:
-      let msg409 = getMsg(status, code)
-      if (msg409) {
-        Message.error(msg409)
-      }
-      break
-    case 500:
-      let msg500 = getMsg(status, code)
-      if (msg500) {
-        Message.error(msg500)
-      }
-      break
+    }
+  }
+  let msg = getMsg(status, code)
+  if (msg) {
+    Message.error(msg)
   }
 }
 

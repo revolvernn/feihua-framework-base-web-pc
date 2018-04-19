@@ -4,7 +4,8 @@ const config = {
     // 文件上传地址
     uploadUrl: Axios.defaults.baseURL + '/upload/file',
     // 文件下载地址
-    downloadUrl: Axios.defaults.baseURL + '/upload/file'
-  }
+    downloadUrl: Axios.defaults.baseURL + '/file'
+  },
+  httpBaseURL: Axios.defaults.baseURL
 }
 export default config

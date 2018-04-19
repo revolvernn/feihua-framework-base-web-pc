@@ -12,14 +12,8 @@
           <el-collapse-item title="查询条件" name="1">
 
             <el-form ref="searchform" :model="searchFormModel" :inline="true" size="small">
-              <el-form-item label="帐号">
-                <el-input  v-model="searchFormModel.account"></el-input>
-              </el-form-item>
               <el-form-item label="姓名">
                 <el-input  v-model="searchFormModel.nickname"></el-input>
-              </el-form-item>
-              <el-form-item label="手机">
-                <el-input  v-model="searchFormModel.mobile"></el-input>
               </el-form-item>
               <el-form-item label="是否锁定">
                 <self-dict-select v-model="searchFormModel.locked" type="yes_no"></self-dict-select>
@@ -117,6 +111,7 @@
           }
         ],
         page: {
+          pageNo: 1,
           dataNum: 0
         },
         // 表格数据
@@ -124,8 +119,6 @@
         tableLoading: false,
         // 搜索的查询条件
         searchFormModel: {
-          account: '',
-          mobile: '',
           locked: '',
           dataOfficeId: '',
           nickname: '',
@@ -141,7 +134,6 @@
     methods: {
       // 点击树节点事件
       treeNodeClick (data) {
-        console.log(this.$refs)
         this.$refs.officeinput.setLabelName(data.name)
         this.searchFormModel.dataOfficeId = data.id
         this.searchBtnClick()
@@ -151,10 +143,17 @@
         this.loadTableData(1)
       },
       // 加载表格数据
-      loadTableData (pageNo) {
+      loadTableData (pageNo, pageNoChange) {
         let self = this
-        if (pageNo) {
-          self.searchFormModel.pageNo = pageNo
+        if (pageNo > 0) {
+          if (pageNoChange) {
+            self.searchFormModel.pageNo = pageNo
+          } else {
+            if (self.page.pageNo !== pageNo) {
+              self.page.pageNo = pageNo
+              return
+            }
+          }
         }
         self.tableLoading = true
         this.$http.get('/base/users', self.searchFormModel)
@@ -179,7 +178,8 @@
       },
       // 页码改变加载对应页码数据
       pageNoChange (val) {
-        this.loadTableData(val)
+        this.page.pageNo = val
+        this.loadTableData(val, true)
       },
       // tablb 表格编辑行
       editTableRowClick (index, row) {

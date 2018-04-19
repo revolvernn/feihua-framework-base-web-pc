@@ -8,9 +8,6 @@
       <el-form-item label="昵称" prop="nickname">
         <el-input  v-model="form.nickname"></el-input>
       </el-form-item>
-      <el-form-item label="手机" prop="mobile">
-        <el-input  v-model="form.mobile"></el-input>
-      </el-form-item>
       <el-form-item label="性别" prop="gender">
         <self-dict-select v-model="form.gender" type="gender"></self-dict-select>
       </el-form-item>
@@ -32,7 +29,6 @@
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   import OfficeTree from '@/views/office/OfficeTree.vue'
   import OfficeInputSelect from '@/views/office/OfficeInputSelect'
-  import { getRegExpByTypeSync } from '@/utils/regExp.js'
   export default {
     name: 'UserEdit',
     components: {
@@ -46,7 +42,6 @@
         form: {
           account: null,
           nickname: '',
-          mobile: '',
           locked: '',
           gender: '',
           dataOfficeId: null,
@@ -70,9 +65,6 @@
           ],
           gender: [
             {required: true, message: '必填', trigger: 'blur'}
-          ],
-          mobile: [
-            {pattern: getRegExpByTypeSync(this, 'mobile'), message: '请填写正确的手机号', trigger: 'blur'}
           ]
         }
       }

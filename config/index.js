@@ -17,7 +17,8 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
-        }
+        },
+        emulateJSON: true
       }
     },
 

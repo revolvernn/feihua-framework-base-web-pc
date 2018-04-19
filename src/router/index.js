@@ -235,6 +235,63 @@ const router = new Router({
           name: 'UrlMapping',
           component: _import('developer/UrlMapping'),
           meta: { keepAlive: true }
+        },
+        // 流程相关
+        {
+          path: 'Workflow/Task',
+          name: 'Task',
+          component: _import('activiti/Task'),
+          meta: { keepAlive: true }
+        },
+        {
+          path: 'Workflow/Model',
+          name: 'Model',
+          component: _import('activiti/Model'),
+          meta: { keepAlive: true }
+        },
+        {
+          path: 'Workflow/ProcessDefinition',
+          name: 'ProcessDefinition',
+          component: _import('activiti/ProcessDefinition'),
+          meta: { keepAlive: true }
+        },
+        {
+          path: 'Workflow/ProcessRunning',
+          name: 'ProcessRunning',
+          component: _import('activiti/ProcessRunning'),
+          meta: { keepAlive: true }
+        },
+        // oa
+        {
+          path: 'Oa/Leave',
+          name: 'Leave',
+          component: _import('oa/workattendance/leave/Leave'),
+          meta: { keepAlive: true }
+        },
+        {
+          path: 'Oa/LeaveAdd',
+          name: 'LeaveAdd',
+          component: _import('oa/workattendance/leave/LeaveAdd'),
+          meta: { menu: {name: '请假单添加'} }
+        },
+        {
+          path: 'Oa/LeaveEdit/:id',
+          name: 'LeaveEdit',
+          component: _import('oa/workattendance/leave/LeaveEdit'),
+          meta: { menu: {name: '请假单修改'}, keepAlive: true }
+        },
+        {
+          path: 'Oa/LeaveAduit',
+          name: 'LeaveAduit',
+          component: _import('oa/workattendance/leave/LeaveAduit'),
+          meta: { menu: {name: '请假单审核'}, keepAlive: true }
+        },
+        // 文件管理
+        {
+          path: 'File',
+          name: 'File',
+          component: _import('file/File'),
+          meta: { keepAlive: true }
         }
       ]
     }

@@ -4,7 +4,7 @@
       <self-dict-select v-model="form.type" type="functionResource_dataScope" :show-none="false"></self-dict-select>
     </el-form-item>
     <el-form-item v-show="form.type === 'self'">
-      <fun-resource-tree ref="funresourcetree" show-checkbox></fun-resource-tree>
+      <fun-resource-tree ref="funresourcetree" :check-strictly="checkStrictly" show-checkbox></fun-resource-tree>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="submitBtnClick" :loading="addLoading">提交</el-button>
@@ -31,6 +31,7 @@
         roleId: null,  // 角色id,父级传来的
         formDataLoading: false,
         addLoading: false,
+        checkStrictly: true,
         formRules: {
           type: [
             {required: true, message: '必填', trigger: 'blur'}

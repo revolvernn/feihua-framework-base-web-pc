@@ -5,7 +5,7 @@ export function arrayToTree (sNodes) {
   let key = 'id'
   let parentKey = 'parentId'
   let childKey = 'children'
-  if (!key || key === '' || !sNodes) return []
+  if (!sNodes) return []
   if ($.isArray(sNodes)) {
     var r = []
     var tmpMap = []

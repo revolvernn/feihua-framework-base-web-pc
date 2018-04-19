@@ -7,9 +7,6 @@
       <el-form-item label="昵称" prop="nickname">
         <el-input  v-model="form.nickname"></el-input>
       </el-form-item>
-      <el-form-item label="手机" prop="mobile">
-        <el-input  v-model="form.mobile"></el-input>
-      </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input type="password"  v-model="form.password" auto-complete="off"></el-input>
       </el-form-item>
@@ -35,7 +32,6 @@
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   import OfficeTree from '@/views/office/OfficeTree.vue'
   import OfficeInputSelect from '@/views/office/OfficeInputSelect'
-  import { getRegExpByTypeSync } from '@/utils/regExp.js'
   export default {
     components: {
       OfficeTree,
@@ -47,7 +43,6 @@
         form: {
           account: null,
           nickname: '',
-          mobile: '',
           locked: '',
           gender: '',
           dataOfficeId: null,
@@ -70,9 +65,6 @@
           ],
           password: [
             {required: true, message: '必填', trigger: 'blur'}
-          ],
-          mobile: [
-            {pattern: getRegExpByTypeSync(this, 'mobile'), message: '请填写正确的手机号', trigger: 'blur'}
           ]
         }
       }

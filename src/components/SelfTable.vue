@@ -9,8 +9,13 @@
            <el-button v-for="btn in item.buttons"  :key="scope.$index"
                       @click.native.prevent="btn.click(scope.$index, scope.row)"
                       type="text"
-                      size="small">
-             <template v-if="btn.label">
+                      size="small"
+                      :disabled="btnDisabled(btn.disabled, scope.$index, scope.row)"
+           >
+             <template v-if="typeof btn.label == 'function'">
+               {{btn.label(scope.$index, scope.row)}}
+             </template>
+             <template v-else-if="btn.label">
                {{btn.label}}
              </template>
              <template v-else>
@@ -94,6 +99,13 @@
       getDictLabel (type, value) {
         let dict = getDictByValueSync(this, type, value)
         return dict ? dict.name : null
+      },
+      btnDisabled (disabled, index, row) {
+        if (typeof disabled === 'function') {
+          return disabled(index, row)
+        } else {
+          return disabled
+        }
       }
     }
   }

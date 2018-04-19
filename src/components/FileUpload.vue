@@ -8,7 +8,7 @@
       ref="upload"
       class="avatar-uploader"
       :action="$config.file.uploadUrl"
-      :data="data"
+      :data="dataParam"
       :accept="accept"
       :limit="limit"
       name="file"
@@ -34,12 +34,14 @@
   export default {
     name: 'FileUpload',
     props: {
-      // 上传时附带的额外参数
+      // 上传时附带的额外参数,可以传path和fileType两个参数，其中fileType可选值为file_type_export或file_type_upload
       data: null,
       // 接受上传的文件类型
       accept: null,
       // 最大允许上传个数
-      limit: null,
+      limit: {
+        default: 1
+      },
       // 上传成功回调
       onSuccess: null,
       // 弹窗标题
@@ -54,7 +56,13 @@
       }
     },
     mounted () {
-      console.log('FileUpload mounted')
+    },
+    computed: {
+      dataParam () {
+        if (!this.data) {
+          return {path: 'upload', fileType: 'file_type_upload'}
+        }
+      }
     },
     methods: {
       show () {

@@ -77,7 +77,7 @@
         // 搜索的查询条件
         searchFormModel: {
           name: '',
-          isDisabled: '',
+          type: '',
           pageable: true,
           pageNo: 1,
           pageSize: 10

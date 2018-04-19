@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-aside width="200px" style="background-color:#304156">
+    <el-aside width="200px" style="background-color:#304156;overflow-x: hidden;">
       <el-container>
         <el-header style="padding: 0.4rem;color: #fff">
           <profile></profile>
