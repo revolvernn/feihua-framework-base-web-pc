@@ -13,7 +13,7 @@
         <el-col :span="6">
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-setting" style="color: rgb(255, 255, 255);"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="updatePassword">修改密码</el-dropdown-item>
@@ -21,7 +21,7 @@
             </el-dropdown-menu>
           </el-dropdown>
           <br/>
-          <el-badge :value="123" :max="99" class="item">
+          <el-badge :value="0" :max="99" class="item message">
             <i class="el-icon-bell"></i>
           </el-badge>
         </el-col>
@@ -102,6 +102,9 @@
     border-radius: 50%;
   }
   .head-pic:hover{
+    cursor: pointer;
+  }
+  .message:hover{
     cursor: pointer;
   }
 </style>
