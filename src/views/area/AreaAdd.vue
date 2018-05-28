@@ -6,7 +6,7 @@
         <el-input  v-model="form.name"></el-input>
       </el-form-item>
       <el-form-item label="类型" prop="type" required>
-        <self-dict-select v-model="form.type" type=""></self-dict-select>
+        <self-dict-select v-model="form.type" type="area_type"></self-dict-select>
       </el-form-item>
       <el-form-item label="父级" prop="parentId">
         <AreaInputSelect ref="areainput"  v-model="form.parentId">
