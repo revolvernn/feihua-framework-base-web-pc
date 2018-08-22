@@ -6,8 +6,9 @@ import router from './router'
 import http from '@/utils/httpUtils.js'
 import store from './store/store'
 import Element from 'element-ui'
+// bootstrap 中已经引入
+// import 'normalize.css/normalize.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'normalize.css/normalize.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import config from '@/utils/config.js'
 Vue.use(Element)

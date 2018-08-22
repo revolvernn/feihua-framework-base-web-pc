@@ -1,29 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Store from '../store/store'
-import Login from '@/views/login/Login.vue'
-import Main from '@/views/main/Main.vue'
-import Area from '@/views/area/Area.vue'
-import AreaAdd from '@/views/area/AreaAdd.vue'
-import AreaEdit from '@/views/area/AreaEdit.vue'
-import Dict from '@/views/dict/Dict.vue'
-import DictAdd from '@/views/dict/DictAdd.vue'
-import DictEdit from '@/views/dict/DictEdit.vue'
-import Office from '@/views/office/Office.vue'
-import OfficeAdd from '@/views/office/OfficeAdd.vue'
-import OfficeEdit from '@/views/office/OfficeEdit.vue'
-import Role from '@/views/role/Role.vue'
-import RoleAdd from '@/views/role/RoleAdd.vue'
-import RoleEdit from '@/views/role/RoleEdit.vue'
-import User from '@/views/user/User.vue'
-import UserAdd from '@/views/user/UserAdd.vue'
-import UserEdit from '@/views/user/UserEdit.vue'
-import FunResource from '@/views/funResource/FunResource.vue'
-import FunResourceAdd from '@/views/funResource/FunResourceAdd.vue'
-import FunResourceEdit from '@/views/funResource/FunResourceEdit.vue'
-import DataScope from '@/views/dataScope/DataScope.vue'
-// import DataScopeAdd from '@/views/dataScope/DataScopeAdd.vue'
-// import DataScopeEdit from '@/views/dataScope/DataScopeEdit.vue'
 const _import = require('@/router/_import_' + process.env.NODE_ENV)
 Vue.use(Router)
 
@@ -33,7 +10,7 @@ const router = new Router({
     {
       path: '/Login',
       name: 'Login',
-      component: Login
+      component: _import('login/Login')
     },
     {
       path: '/',
@@ -42,7 +19,7 @@ const router = new Router({
     {
       path: '/Main',
       name: 'Main',
-      component: Main,
+      component: _import('main/Main'),
       meta: {
         // 添加该字段，表示进入这个路由是需要登录的
         requireAuth: true
@@ -56,70 +33,70 @@ const router = new Router({
         {
           path: 'Dict',
           name: 'Dict',
-          component: Dict,
+          component: _import('dict/Dict'),
           meta: { keepAlive: true }
         },
         {
           path: 'DictAdd',
           name: 'DictAdd',
-          component: DictAdd,
+          component: _import('dict/DictAdd'),
           meta: { menu: {name: '字典添加'} }
         },
         {
           path: 'DictEdit/:id',
           name: 'DictEdit',
-          component: DictEdit,
+          component: _import('dict/DictEdit'),
           meta: { menu: {name: '字典修改'}, keepAlive: true }
         },
         {
           path: 'Area',
           name: 'Area',
-          component: Area
+          component: _import('area/Area')
         },
         {
           path: 'AreaAdd',
           name: 'AreaAdd',
-          component: AreaAdd,
+          component: _import('area/AreaAdd'),
           meta: { menu: {name: '区域添加'} }
         },
         {
           path: 'AreaEdit/:id',
           name: 'AreaEdit',
-          component: AreaEdit,
+          component: _import('area/AreaEdit'),
           meta: { menu: {name: '区域修改'}, keepAlive: true }
         },
         {
           path: 'Office',
           name: 'Office',
-          component: Office
+          component: _import('office/Office')
         },
         {
           path: 'OfficeAdd',
           name: 'OfficeAdd',
-          component: OfficeAdd,
+          component: _import('office/OfficeAdd'),
           meta: { menu: {name: '机构添加'} }
         },
         {
           path: 'OfficeEdit/:id',
           name: 'OfficeEdit',
-          component: OfficeEdit,
+          component: _import('office/OfficeEdit'),
           meta: { menu: {name: '机构修改'}, keepAlive: true }
         },
         {
           path: 'Role',
           name: 'Role',
-          component: Role
+          component: _import('role/Role')
         },
         {
           path: 'RoleAdd',
           name: 'RoleAdd',
-          component: RoleAdd,
+          component: _import('role/RoleAdd'),
           meta: { menu: {name: '角色添加'} }
         },
         {
           path: 'RoleEdit/:id',
           name: 'RoleEdit',
-          component: RoleEdit,
+          component: _import('role/RoleEdit'),
           meta: { menu: {name: '角色修改'}, keepAlive: true }
         },
         {
@@ -137,18 +114,18 @@ const router = new Router({
         {
           path: 'User',
           name: 'User',
-          component: User
+          component: _import('user/User')
         },
         {
           path: 'UserAdd',
           name: 'UserAdd',
-          component: UserAdd,
+          component: _import('user/UserAdd'),
           meta: { menu: {name: '用户添加'} }
         },
         {
           path: 'UserEdit/:id',
           name: 'UserEdit',
-          component: UserEdit,
+          component: _import('user/UserEdit'),
           meta: { menu: {name: '用户修改'}, keepAlive: true }
         },
         {
@@ -166,62 +143,42 @@ const router = new Router({
         {
           path: 'FunResource',
           name: 'FunResource',
-          component: FunResource
+          component: _import('funResource/FunResource')
         },
         {
           path: 'FunResourceAdd',
           name: 'FunResourceAdd',
-          component: FunResourceAdd,
+          component: _import('funResource/FunResourceAdd'),
           meta: { menu: {name: '功能资源添加'} }
         },
         {
           path: 'FunResourceEdit/:id',
           name: 'FunResourceEdit',
-          component: FunResourceEdit,
+          component: _import('funResource/FunResourceEdit'),
           meta: { menu: {name: '功能资源修改'}, keepAlive: true }
         },
         {
           path: 'DataScope',
           name: 'DataScope',
-          component: DataScope
+          component: _import('dataScope/DataScope')
         },
         {
           path: 'DataScopeAdd',
           name: 'DataScopeAdd',
-          // component: DataScopeAdd,
           component: _import('dataScope/DataScopeAdd'),
           meta: { menu: {name: '数据范围添加'} }
         },
         {
           path: 'DataScopeEdit/:id',
           name: 'DataScopeEdit',
-          // component: DataScopeEdit,
           component: _import('dataScope/DataScopeEdit'),
           meta: { menu: {name: '数据范围修改'}, keepAlive: true }
         },
         {
           path: 'DataScopeSetting/:id',
           name: 'DataScopeSetting',
-          // component: DataScopeEdit,
           component: _import('dataScope/DataScopeSetting'),
           meta: { menu: {name: '数据范围设置'}, keepAlive: true }
-        },
-        {
-          path: 'EricUser',
-          name: 'EricUser',
-          component: _import('eric/EricUser')
-        },
-        {
-          path: 'EricUserAdd',
-          name: 'EricUserAdd',
-          component: _import('eric/EricUserAdd'),
-          meta: { menu: {name: '用户添加'} }
-        },
-        {
-          path: 'EricUserEdit/:id',
-          name: 'EricUserEdit',
-          component: _import('eric/EricUserEdit'),
-          meta: { menu: {name: '用户修改'}, keepAlive: true }
         },
         {
           path: 'Iframe',
@@ -292,6 +249,24 @@ const router = new Router({
           name: 'File',
           component: _import('file/File'),
           meta: { keepAlive: true }
+        },
+        // 微信相关
+        {
+          path: 'Weixin/Menu',
+          name: 'WeixinMenu',
+          component: _import('weixin/menu/WeixinMenu')
+        },
+        {
+          path: 'Weixin/Menu/WeixinMenuEdit/:id',
+          name: 'WeixinMenuEdit',
+          component: _import('weixin/menu/WeixinMenuEdit'),
+          meta: { menu: {name: '微信菜单编辑'}, keepAlive: true }
+        },
+        {
+          path: 'Weixin/Menu/WeixinMenuAdd',
+          name: 'WeixinMenuAdd',
+          component: _import('weixin/menu/WeixinMenuAdd'),
+          meta: { menu: {name: '微信菜单添加'}, keepAlive: true }
         }
       ]
     }

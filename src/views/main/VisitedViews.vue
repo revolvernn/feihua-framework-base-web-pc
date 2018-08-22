@@ -23,9 +23,9 @@
           <a @click="afterAdd">定位当前选项卡</a>
         </li>
         <li class="divider"></li>
-        <li><a @click="closeAll">关闭全部选项卡</a>
-        </li>
         <li><a @click="closeOthers">关闭其他选项卡</a>
+        </li>
+        <li><a @click="closeAll">关闭全部选项卡</a>
         </li>
       </ul>
     </div>

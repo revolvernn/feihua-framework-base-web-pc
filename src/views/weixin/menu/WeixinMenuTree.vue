@@ -1,5 +1,5 @@
 <template>
-<div class="wrapper">
+<div>
   <el-input
     placeholder="输入关键字进行过滤"
     v-model="treeFilterText" clearable>
@@ -9,7 +9,8 @@
            @node-click="treeNodeClick"
            :filter-node-method="treeFilterNode"
            ref="tree"
-           :expand-on-click-node="false">
+           node-key="id"
+           :expand-on-click-node="false" :default-expanded-keys="defaultExpandedKeys">
 
   </el-tree>
 </div>
@@ -26,6 +27,7 @@
     },
     data () {
       return {
+        defaultExpandedKeys: [],
         // 左边树搜索文本
         treeFilterText: '',
         // 左边树数据
@@ -61,7 +63,7 @@
       loadTreeData () {
         let self = this
         self.treeLoading = true
-        this.$http.get('/base/areas')
+        this.$http.get('/weixinmenu/menus')
           .then(function (response) {
             let content = response.data.data.content
             self.treeData = content
@@ -83,6 +85,14 @@
       treeData (data) {
         // 数据转树结构
         let treeData = arrayToTree(data)
+        // 默认展开不多于5个的根节点
+        this.defaultExpandedKeys = []
+        for (let i = 0; i < treeData.length; i++) {
+          this.defaultExpandedKeys.push(treeData[i].id)
+          if (this.defaultExpandedKeys.length > 5) {
+            break
+          }
+        }
         return treeData
       }
     }
@@ -91,7 +101,4 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-  height:100%;
-}
 </style>

@@ -18,6 +18,14 @@
             <input type="password" name="password" class="form-control form-inline" v-model="form.password" placeholder="密码">
           </div>
         </div>
+        <div class="form-group" v-if="showCaptcha && captchaUrl">
+          <div class="input-group">
+            <input type="text" name="captcha" class="form-control form-inline" v-model="form.captcha" placeholder="验证码">
+            <span class="input-group-addon" style="padding:0;">
+            <img :src="captchaUrl" width="100" @click="changeCaptcha" height="30"/>
+            </span>
+          </div>
+        </div>
         <div class="form-group">
           <div class="checkbox">
             <label>
@@ -48,13 +56,20 @@
           loginType: 'ACCOUNT',
           principal: null,
           password: null,
+          captcha: null,
           rememberMe: true
         },
         validateRules: {
           principal: [{required: true, message: '帐号不能为空'}],
           password: [{required: true, message: '密码不能为空'}]
-        }
+        },
+        showCaptcha: false,
+        captchaUrl: null,
+        tryLoginNum: 0
       }
+    },
+    mounted () {
+      this.changeCaptcha()
     },
     methods: {
       doLogin () {
@@ -62,6 +77,7 @@
         if (self.loading === true) {
           return
         }
+
         self.loading = true
         let validator = new Schema(this.validateRules)
         validator.validate(this.form, {first: true}, (errors, fields) => {
@@ -70,6 +86,11 @@
             self.loading = false
             return null
           } else {
+            if (self.showCaptcha && (self.form.captcha === null || self.form.captcha === '')) {
+              self.msg = '验证码不能为空'
+              self.loading = false
+              return
+            }
             self.msg = null
             // 进行登录
             self.$http.post('/login', self.form)
@@ -83,13 +104,26 @@
               .catch(function (response) {
                 if (response.response.status === 401) {
                   self.msg = '用户名或密码错误'
+                  self.tryLoginNum ++
+                  if (self.tryLoginNum >= 2) {
+                    self.showCaptcha = true
+                  }
+                } else if (response.response.status === 400) {
+                  self.msg = '验证码不正确'
+                  self.showCaptcha = true
                 } else {
                   self.msg = '抱歉系统好像出问题了'
                 }
+                self.changeCaptcha()
                 self.loading = false
               })
           }
         })
+      },
+      // 加载新的验证码
+      changeCaptcha () {
+        this.captchaUrl = '/api/captcha?t=' + new Date().getTime()
+        console.log(this.captchaUrl)
       }
     }
   }

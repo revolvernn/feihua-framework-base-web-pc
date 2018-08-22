@@ -60,11 +60,11 @@
               self.addLoading = true
               self.$http.post('/base/area', self.form)
                 .then(function (response) {
-                  self.$message.info('字典添加成功')
+                  self.$message.info('区域添加成功')
                   self.addLoading = false
                 })
                 .catch(function (response) {
-                  self.$message.error('字典添加失败，请稍后再试')
+                  self.$message.error('区域添加失败，请稍后再试')
                   self.addLoading = false
                 })
             } else {

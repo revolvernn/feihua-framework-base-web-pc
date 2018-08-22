@@ -2,10 +2,21 @@
 
   <div class="wrapper">
 
+    <el-dialog
+      title="请选择要同步的公众平台"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <self-dict-select v-model="dialogValue" type="weixin_publicplatform_type"></self-dict-select>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="synToWeixinClick" :loading="synToWeixinLoading">确 定</el-button>
+  </span>
+    </el-dialog>
+
     <el-container>
       <el-aside width="200px">
         <el-scrollbar style="height: 100%;" wrapStyle="height:100%;overflow:auto;" >
-          <area-tree ref="lefttree" v-on:nodeClick="treeNodeClick"></area-tree>
+          <WeixinMenuTree ref="lefttree" v-on:nodeClick="treeNodeClick"></WeixinMenuTree>
          </el-scrollbar>
       </el-aside>
       <el-main>
@@ -16,14 +27,16 @@
                 <el-input  v-model="searchFormModel.name"></el-input>
               </el-form-item>
               <el-form-item label="类型">
-                <self-dict-select v-model="searchFormModel.type" type="area_type"></self-dict-select>
+                <self-dict-select v-model="searchFormModel.which" type="weixin_publicplatform_type"></self-dict-select>
               </el-form-item>
               <el-form-item label="父级">
-                <el-input  v-model="searchFormParentName" :readonly="true" clearable></el-input>
+                <WeixinMenuInputSelect ref="weixinmenuinput"  v-model="searchFormModel.parentId">
+                </WeixinMenuInputSelect>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
                 <el-button type="primary" @click="addTableRowClick">添加</el-button>
+                <el-button type="primary" @click="dialogVisible = true">同步到微信</el-button>
               </el-form-item>
             </el-form>
           </el-collapse-item>
@@ -36,19 +49,21 @@
 </template>
 
 <script>
-  import AreaTree from './AreaTree.vue'
+  import WeixinMenuTree from './WeixinMenuTree.vue'
   import SelfPage from '@/components/SelfPage.vue'
   import SelfTable from '@/components/SelfTable.vue'
   import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   import { getDictByValueSync } from '@/utils/dictUtils.js'
+  import WeixinMenuInputSelect from '@/views/weixin/menu/WeixinMenuInputSelect.vue'
   export default {
-    name: 'Area',
+    name: 'WeixinMenu',
     components: {
       SelfDictSelect,
       SelfTable,
-      AreaTree,
-      SelfPage
+      WeixinMenuTree,
+      SelfPage,
+      WeixinMenuInputSelect
     },
     data () {
       return {
@@ -77,6 +92,7 @@
           }
         ],
         page: {
+          pageNo: 1,
           dataNum: 0
         },
         // 表格数据
@@ -84,17 +100,17 @@
         tableLoading: false,
         // 搜索的查询条件
         searchFormModel: {
-          value: '',
           name: '',
           type: '',
-          isSystem: '',
+          which: '',
           parentId: '',
           pageable: true,
           pageNo: 1,
           pageSize: 10
         },
-        // 搜索的查询条件父级名称显示
-        searchFormParentName: ''
+        dialogVisible: false,
+        synToWeixinLoading: false,
+        dialogValue: null
       }
     },
     mounted () {
@@ -103,7 +119,7 @@
     methods: {
       // 点击树节点事件
       treeNodeClick (data) {
-        this.searchFormParentName = data.name
+        this.$refs.weixinmenuinput.setLabelName(data.name)
         this.searchFormModel.parentId = data.id
         this.searchBtnClick()
       },
@@ -112,13 +128,20 @@
         this.loadTableData(1)
       },
       // 加载表格数据
-      loadTableData (pageNo) {
+      loadTableData (pageNo, pageNoChange) {
         let self = this
-        if (pageNo) {
-          self.searchFormModel.pageNo = pageNo
+        if (pageNo > 0) {
+          if (pageNoChange) {
+            self.searchFormModel.pageNo = pageNo
+          } else {
+            if (self.page.pageNo !== pageNo) {
+              self.page.pageNo = pageNo
+              return
+            }
+          }
         }
         self.tableLoading = true
-        this.$http.get('/base/areas', self.searchFormModel)
+        this.$http.get('/weixinmenu/menus', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
             self.tableData = content
@@ -140,11 +163,12 @@
       },
       // 页码改变加载对应页码数据
       pageNoChange (val) {
-        this.loadTableData(val)
+        this.page.pageNo = val
+        this.loadTableData(val, true)
       },
       // tablb 表格编辑行
       editTableRowClick (index, row) {
-        this.$router.push('/Main/AreaEdit/' + row.id)
+        this.$router.push('/Main/Weixin/Menu/WeixinMenuEdit/' + row.id)
       },
       // tablb 表格删除行
       deleteTableRowClick (index, row) {
@@ -152,7 +176,7 @@
         this.$confirm('确定要删除吗, 是否继续?', '提示', {
           type: 'warning'
         }).then(() => {
-          this.$http.delete('/base/area/' + row.id)
+          this.$http.delete('/weixinmenu/menu/' + row.id)
             .then(function (response) {
               self.$message.success('删除成功')
               // 重新加载数据
@@ -166,20 +190,39 @@
         })
       },
       addTableRowClick () {
-        loadDataControl.add(this.$store, 'AreaAddLoadData=true')
-        this.$router.push('/Main/AreaAdd')
+        loadDataControl.add(this.$store, 'WeixinMenuAddLoadData=true')
+        this.$router.push('/Main/Weixin/Menu/WeixinMenuAdd')
+      },
+      synToWeixinClick () {
+        let self = this
+        if (!self.dialogValue) {
+          self.dialogValue = self.searchFormModel.which
+        }
+        if (!self.dialogValue) {
+          self.$message.error('请先选择同步到哪一个公众平台')
+          return
+        }
+        self.synToWeixinLoading = true
+        self.$http.post('/weixinmenu/synToWeixinServer', {which: self.dialogValue})
+          .then(res => {
+            self.$message.success('同步成功')
+            self.synToWeixinLoading = false
+          }).catch(function (error) {
+            self.synToWeixinLoading = false
+            if (error.response.status === 404) {
+              self.$message.error('同步失败，请确认已添加菜单')
+            }
+            if (error.response.status === 400) {
+              self.$message.error('同步失败，请确认添加的菜单规则正确')
+            }
+          })
       },
       typeFormatter (row) {
-        let dict = getDictByValueSync(this, 'area_type', row.type)
+        let dict = getDictByValueSync(this, 'weixin_menu_type', row.type)
         return dict ? dict.name : null
       }
     },
     watch: {
-      searchFormParentName (value) {
-        if (value === '') {
-          this.searchFormModel.parentId = ''
-        }
-      }
     }
   }
 </script>

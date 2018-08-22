@@ -86,12 +86,12 @@
               self.addLoading = true
               self.$http.put('/base/area/' + self.id, self.form)
                 .then(function (response) {
-                  self.$message.info('字典修改成功')
+                  self.$message.info('区域修改成功')
                   self.addLoading = false
                 })
                 .catch(function (response) {
                   if (response.response.status === 404) {
-                    self.$message.error('字典修改失败，数据不存在或已被他人修改，请刷新列表后再试')
+                    self.$message.error('区域修改失败，数据不存在或已被他人修改，请刷新列表后再试')
                   }
                   self.addLoading = false
                 })
