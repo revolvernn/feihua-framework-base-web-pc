@@ -83,7 +83,23 @@
             label: '顺序'
           },
           {
+            name: 'parentId',
+            label: '父级',
+            formatter: this.dataParentFormatter
+          },
+          {
+            name: 'dataOfficeId',
+            label: '机构',
+            formatter: this.dataOfficeFormatter
+          },
+          {
+            name: 'dataAreaId',
+            label: '区域',
+            formatter: this.dataAreaFormatter
+          },
+          {
             label: '操作',
+            width: '150',
             buttons: [
               {
                 label: '编辑',
@@ -100,6 +116,9 @@
           pageNo: 1,
           dataNum: 0
         },
+        tableOffice: {},
+        tableParent: {},
+        tableArea: {},
         // 表格数据
         tableData: [],
         tableLoading: false,
@@ -111,6 +130,9 @@
           isSystem: '',
           parentId: '',
           orderby: 'sequence',
+          includeOffice: true,
+          includeParent: true,
+          includeArea: true,
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -150,6 +172,9 @@
         this.$http.get('/base/dicts', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
+            self.tableOffice = response.data.data.office
+            self.tableParent = response.data.data.parent
+            self.tableArea = response.data.data.area
             self.tableData = content
             self.page.dataNum = response.data.data.page.dataNum
             self.tableLoading = false
@@ -158,6 +183,9 @@
             if (error.response.status === 404) {
               self.tableData = []
               self.page.dataNum = 0
+              self.tableOffice = {}
+              self.tableParent = {}
+              self.tableArea = {}
             }
             self.tableLoading = false
           })
@@ -202,6 +230,27 @@
       isSystemFormatter (row) {
         let dict = getDictByValueSync(this, 'yes_no', row.isSystem)
         return dict ? dict.name : null
+      },
+      dataOfficeFormatter (row) {
+        let dataOfficeName = null
+        if (this.tableOffice && this.tableOffice[row.dataOfficeId]) {
+          dataOfficeName = this.tableOffice[row.dataOfficeId].name || null
+        }
+        return dataOfficeName
+      },
+      dataParentFormatter (row) {
+        let name = null
+        if (this.tableParent && this.tableParent[row.parentId]) {
+          name = this.tableParent[row.parentId].name || null
+        }
+        return name
+      },
+      dataAreaFormatter (row) {
+        let name = null
+        if (this.tableParent && this.tableParent[row.dataAreaId]) {
+          name = this.tableParent[row.dataAreaId].name || null
+        }
+        return name
       }
     },
     watch: {
@@ -211,9 +260,9 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-
-}
+  .wrapper .el-collapse{
+    padding: 0 10px;
+  }
 .el-main{
   padding:0;
 }

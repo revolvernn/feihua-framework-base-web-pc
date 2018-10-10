@@ -1,5 +1,7 @@
 <template>
   <div class="content-tabs">
+    <button class="roll-nav collapse-btn" @click="collapseLeftMenu"><i class="glyphicon glyphicon-menu-hamburger"></i>
+    </button>
     <button class="roll-nav roll-left J_tabLeft" @click="leftTab"><i class="el-icon-d-arrow-left"></i>
     </button>
     <nav class="page-tabs J_menuTabs">
@@ -40,6 +42,9 @@
     props: {
       menus: {
         type: Array
+      },
+      isCollapse: {
+        default: false
       }
     },
     data () {
@@ -56,6 +61,9 @@
       ])
     },
     methods: {
+      collapseLeftMenu () {
+        this.$emit('collapseLeftMenu', !this.isCollapse)
+      },
       // 计算宽度
       cwith (l) {
         var k = 0
@@ -145,7 +153,7 @@
             }
           }
         }
-        this.marginLeft = 0 - p
+        this.marginLeft = 34 - p
       },
       // 关闭全部选项卡
       closeAll () {
@@ -304,14 +312,18 @@
     z-index: 2;
     top: 0
   }
-  .content-tabs .roll-left {
-    left: 0;
+  .content-tabs .roll-left{
+    left: 34px;
+    border-right: solid 1px #eee;
+  }
+  .content-tabs .collapse-btn{
     border-right: solid 1px #eee;
   }
   .content-tabs .roll-right {
     right: 0;
     border-left: solid 1px #eee;
   }
+
   .content-tabs button {
     background: #fff;
     border: 0;

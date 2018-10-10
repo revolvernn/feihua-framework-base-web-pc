@@ -51,7 +51,13 @@
             dict: 'dataScope_type'
           },
           {
+            name: 'dataOfficeId',
+            label: '机构',
+            formatter: this.dataOfficeFormatter
+          },
+          {
             label: '操作',
+            width: '200',
             buttons: [
               {
                 label: '编辑',
@@ -71,6 +77,7 @@
         page: {
           dataNum: 0
         },
+        tableOffice: {},
         // 表格数据
         tableData: [],
         tableLoading: false,
@@ -78,6 +85,7 @@
         searchFormModel: {
           name: '',
           type: '',
+          includeOffice: true,
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -102,6 +110,7 @@
         this.$http.get('/base/dataScopes', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
+            self.tableOffice = response.data.data.office
             self.tableData = content
             self.page.dataNum = response.data.data.page.dataNum
             self.tableLoading = false
@@ -110,6 +119,7 @@
             if (error.response.status === 404) {
               self.tableData = []
               self.page.dataNum = 0
+              self.tableOffice = {}
             }
             self.tableLoading = false
           })
@@ -152,6 +162,13 @@
       },
       dataScopeClick (index, row) {
         this.$router.push('/Main/DataScopeSetting/' + row.id)
+      },
+      dataOfficeFormatter (row) {
+        let name = null
+        if (this.tableOffice && this.tableOffice[row.dataOfficeId]) {
+          name = this.tableOffice[row.dataOfficeId].name || null
+        }
+        return name
       }
     },
     watch: {
@@ -161,9 +178,9 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-
-}
+  .wrapper .el-collapse{
+    padding: 0 10px;
+  }
 .el-main{
   padding:0;
 }

@@ -3,7 +3,7 @@ import Qs from 'qs'
 import $ from 'jquery'
 import { getMsg } from '@/utils/httpReponseCode.js'
 import { Message } from 'element-ui'
-let baseURL = process.env.NODE_ENV === 'production' ? '' : '/api'
+let baseURL = process.env.NODE_ENV === 'production' ? '/api' : '/api'
 
 Axios.defaults.baseURL = baseURL
 /**

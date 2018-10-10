@@ -12,7 +12,6 @@
       }
     },
     mounted () {
-      console.log('AreaDataScope mounted')
     },
     methods: {
     }

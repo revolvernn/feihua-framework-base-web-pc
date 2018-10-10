@@ -1,6 +1,7 @@
 <template>
  <div>
    <el-table v-loading="tableLoading"
+             border stripe
      size="mini"
      style="width: 100%" :data="tableData">
      <template  v-for="item in columns">

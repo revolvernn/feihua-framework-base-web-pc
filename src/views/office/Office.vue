@@ -3,7 +3,7 @@
   <div class="wrapper">
     <el-container>
       <el-aside width="200px">
-        <el-scrollbar style="height: 100%;" wrapStyle="height:100%;overflow:auto;" >
+        <el-scrollbar style="height: 100%;" wrapStyle="height:100%;overflow:auto;width:200px;" >
           <office-tree ref="lefttree" v-on:nodeClick="treeNodeClick"></office-tree>
          </el-scrollbar>
       </el-aside>
@@ -71,7 +71,18 @@
             formatter: this.typeFormatter
           },
           {
+            name: 'parentId',
+            label: '父级',
+            formatter: this.dataParentFormatter
+          },
+          {
+            name: 'dataAreaId',
+            label: '区域',
+            formatter: this.dataAreaFormatter
+          },
+          {
             label: '操作',
+            width: '150',
             buttons: [
               {
                 label: '编辑',
@@ -88,6 +99,8 @@
           pageNo: 1,
           dataNum: 0
         },
+        tableArea: {},
+        tableParent: {},
         // 表格数据
         tableData: [],
         tableLoading: false,
@@ -97,6 +110,8 @@
           type: '',
           areaId: '',
           parentId: '',
+          includeArea: true,
+          includeParent: true,
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -134,6 +149,8 @@
         this.$http.get('/base/offices', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
+            self.tableArea = response.data.data.area
+            self.tableParent = response.data.data.parent
             self.tableData = content
             self.page.dataNum = response.data.data.page.dataNum
             self.tableLoading = false
@@ -142,6 +159,8 @@
             if (error.response.status === 404) {
               self.tableData = []
               self.page.dataNum = 0
+              self.tableArea = {}
+              self.tableParent = {}
             }
             self.tableLoading = false
           })
@@ -186,6 +205,20 @@
       typeFormatter (row) {
         let dict = getDictByValueSync(this, 'office_type', row.type)
         return dict ? dict.name : null
+      },
+      dataAreaFormatter (row) {
+        let name = null
+        if (this.tableArea && this.tableArea[row.areaId]) {
+          name = this.tableArea[row.areaId].name || null
+        }
+        return name
+      },
+      dataParentFormatter (row) {
+        let name = null
+        if (this.tableParent && this.tableParent[row.parentId]) {
+          name = this.tableParent[row.parentId].name || null
+        }
+        return name
       }
     },
     watch: {
@@ -195,9 +228,9 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-
-}
+  .wrapper .el-collapse{
+    padding: 0 10px;
+  }
 .el-main{
   padding:0;
 }

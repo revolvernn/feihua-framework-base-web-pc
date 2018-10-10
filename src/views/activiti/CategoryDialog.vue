@@ -45,7 +45,6 @@
       }
     },
     mounted () {
-      console.log('FileUpload mounted')
     },
     methods: {
       show () {

@@ -5,6 +5,7 @@ const _import = require('@/router/_import_' + process.env.NODE_ENV)
 Vue.use(Router)
 
 const router = new Router({
+  // base: '/sss',
   mode: 'history',
   routes: [
     {
@@ -184,7 +185,7 @@ const router = new Router({
           path: 'Iframe',
           name: 'Iframe',
           component: _import('iframe/Iframe'),
-          meta: { keepAlive: true }
+          meta: { keepAlive: false }
         },
         // 开发者相关
         {

@@ -12,6 +12,7 @@
     </el-input>
     <el-input   value="" v-model="name" v-on:focus="handleFocus($event)" v-on:handleBlur="handleBlur($event)" v-on:change="emitChange" v-on:input="emitInput" :readonly="true" clearable>
       <el-button slot="append" icon="el-icon-search" v-popover:areaSelect></el-button>
+      <i slot="suffix" class="el-input__icon el-icon-circle-close el-input__clear" @click="setLabelName(null)"></i>
     </el-input>
   </div>
 </template>

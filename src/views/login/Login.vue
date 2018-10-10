@@ -123,7 +123,6 @@
       // 加载新的验证码
       changeCaptcha () {
         this.captchaUrl = '/api/captcha?t=' + new Date().getTime()
-        console.log(this.captchaUrl)
       }
     }
   }

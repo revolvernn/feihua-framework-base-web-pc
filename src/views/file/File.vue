@@ -211,9 +211,9 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-
-}
+  .wrapper .el-collapse{
+    padding: 0 10px;
+  }
 .el-main{
   padding:0;
 }

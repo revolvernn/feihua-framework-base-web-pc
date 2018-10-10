@@ -1,20 +1,22 @@
 <template>
   <div class="wrapper">
     <el-popover
-      ref="funResourceParentSelect"
+      ref="funResourceIconSelect"
       placement="right"
       trigger="click">
       <el-scrollbar wrapStyle="max-height:500px;">
-      <funResource-tree v-on:nodeClick="parentTreeNodeClick"></funResource-tree>
+        <fun-resource-icon  v-model="form.icon" v-on:change="funResourceIconChange"></fun-resource-icon>
       </el-scrollbar>
     </el-popover>
-
     <el-form ref="form" :model="form" :rules="formRules" style="width: 460px;" label-width="100px">
       <el-form-item label="名称" prop="name" required>
         <el-input  v-model="form.name"></el-input>
       </el-form-item>
       <el-form-item label="图标" prop="icon">
-        <el-input  v-model="form.icon"></el-input>
+        <el-input  v-model="form.icon">
+          <i slot="prepend" :class="form.icon"></i>
+          <el-button slot="append" icon="el-icon-search"  v-popover:funResourceIconSelect></el-button>
+        </el-input>
       </el-form-item>
       <el-form-item label="类型" prop="type">
         <self-dict-select v-model="form.type" type="funResource_type"></self-dict-select>
@@ -32,9 +34,8 @@
         <el-input-number v-model="form.sequence" :min="0" :max="1000"></el-input-number>
       </el-form-item>
       <el-form-item label="父级" prop="parentId">
-        <el-input  v-model="formLabel.parentIdName" :readonly="true" clearable>
-          <el-button slot="append" icon="el-icon-search" v-popover:funResourceParentSelect></el-button>
-        </el-input>
+        <FunResourceInputSelect ref="funResourceParentinput"  v-model="form.parentId">
+        </FunResourceInputSelect>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="addBtnClick" :loading="addLoading">添加</el-button>
@@ -48,11 +49,15 @@
   import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   import OfficeTree from '@/views/office/OfficeTree.vue'
+  import FunResourceIcon from '@/views/funResource/FunResourceIcon.vue'
+  import FunResourceInputSelect from '@/views/funResource/FunResourceInputSelect.vue'
   export default {
     components: {
+      FunResourceIcon,
       OfficeTree,
       FunResourceTree,
-      SelfDictSelect},
+      SelfDictSelect,
+      FunResourceInputSelect},
     name: 'FunResourceAdd',
     data () {
       return {
@@ -115,22 +120,13 @@
       },
       resetForm () {
         this.$refs['form'].resetFields()
-        this.formLabel.parentIdName = null
+        this.$refs.funResourceParentinput.setLabelName(null)
       },
-      parentTreeNodeClick (data) {
-        this.form.parentId = data.id
-        this.formLabel.parentIdName = data.name
-      },
-      officeTreeNodeClick (data) {
-        this.form.dataOfficeId = data.id
+      funResourceIconChange (icon) {
+        this.form.icon = icon
       }
     },
     watch: {
-      formLabel (value) {
-        if (value.parentIdName === '') {
-          this.form.parentId = ''
-        }
-      }
     },
     beforeRouteEnter  (to, from, next) {
       next(vm => {

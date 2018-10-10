@@ -66,7 +66,13 @@
             formatter: this.typeFormatter
           },
           {
+            name: 'parentId',
+            label: '父级',
+            formatter: this.dataParentFormatter
+          },
+          {
             label: '操作',
+            width: '150',
             buttons: [
               {
                 label: '编辑',
@@ -83,6 +89,7 @@
           pageNo: 1,
           dataNum: 0
         },
+        tableParent: {},
         // 表格数据
         tableData: [],
         tableLoading: false,
@@ -93,6 +100,7 @@
           type: '',
           isSystem: '',
           parentId: '',
+          includeParent: true,
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -130,6 +138,7 @@
         this.$http.get('/base/areas', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
+            self.tableParent = response.data.data.parent
             self.tableData = content
             self.page.dataNum = response.data.data.page.dataNum
             self.tableLoading = false
@@ -138,6 +147,7 @@
             if (error.response.status === 404) {
               self.tableData = []
               self.page.dataNum = 0
+              self.tableParent = {}
             }
             self.tableLoading = false
           })
@@ -182,6 +192,13 @@
       typeFormatter (row) {
         let dict = getDictByValueSync(this, 'area_type', row.type)
         return dict ? dict.name : null
+      },
+      dataParentFormatter (row) {
+        let name = null
+        if (this.tableParent && this.tableParent[row.parentId]) {
+          name = this.tableParent[row.parentId].name || null
+        }
+        return name
       }
     },
     watch: {
@@ -191,9 +208,9 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-
-}
+  .wrapper .el-collapse{
+    padding: 0 10px;
+  }
 .el-main{
   padding:0;
 }

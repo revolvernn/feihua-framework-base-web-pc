@@ -57,7 +57,6 @@
       }
     },
     mounted () {
-      console.log('UserUpdatePasswordCurrent mounted')
     },
     methods: {
       show () {

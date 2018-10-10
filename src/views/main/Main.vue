@@ -1,14 +1,14 @@
 <template>
   <el-container>
-    <el-aside width="200px" style="background-color:#304156;overflow-x: hidden;">
+    <el-aside :width="leftAsideWidth" style="background-color:#304156;overflow-x: hidden;transition: width 500ms;">
       <el-container>
         <el-header style="padding: 0.4rem;color: #fff">
-          <profile></profile>
+          <profile :is-collapse="isCollapse"></profile>
         </el-header>
         <el-main>
           <el-scrollbar class="self-scroll-bar-view" wrapStyle="overflow:auto;">
-          <el-menu mode="vertical" :default-openeds="defaultOpeneds"
-                   v-loading="menuLoading"
+          <el-menu mode="vertical" :default-openeds="defaultOpeneds" class="el-menu-vertical-demo"
+                   v-loading="menuLoading" :collapse="isCollapse"  v-on:open="handleOpen" v-on:close="handleClose"
                    element-loading-background="rgba(0, 0, 0, 0.8)"
                    :default-active="decodeURIComponent($route.fullPath)" background-color="#304156" text-color="#fff" active-text-color="#409EFF">
             <menu-items :menus="menus"></menu-items>
@@ -19,7 +19,7 @@
     </el-aside>
     <el-container style="overflow: hidden;">
       <el-header style="padding: 0;" height="34">
-        <visited-views :menus="menus"></visited-views>
+        <visited-views :menus="menus" :is-collapse="isCollapse" v-on:collapseLeftMenu="collapseLeftMenu"></visited-views>
       </el-header>
       <el-main style="overflow: hidden;">
         <transition name="slide-left">
@@ -43,6 +43,8 @@
     name: 'Main',
     data () {
       return {
+        leftAsideWidth: '200px',
+        isCollapse: false,
         defaultOpeneds: [],
         collapse: true,
         menuLoading: false,
@@ -53,7 +55,21 @@
       this.loadUserInfo()
       this.loadMenus()
     },
+    watch: {
+      isCollapse (val) {
+        this.leftAsideWidth = val === false ? '200px' : '64px'
+      }
+    },
     methods: {
+      collapseLeftMenu (isCollapse) {
+        this.isCollapse = isCollapse
+      },
+      handleOpen (key, keyPath) {
+        console.log(key, keyPath)
+      },
+      handleClose (key, keyPath) {
+        console.log(key, keyPath)
+      },
       loadMenus () {
         let self = this
         self.menuLoading = true
@@ -110,6 +126,7 @@
 }
 .el-main{
   padding:0;
+  height: 100%;
 }
 .el-menu{
   border-right:0;
@@ -125,4 +142,14 @@
 .slide-left-enter-active{
   opacity: 0;
 }
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 400px;
+}
+</style>
+<style>
+  /*.self-scroll-bar-view */.el-scrollbar__view{
+    overflow: hidden;
+  }
 </style>

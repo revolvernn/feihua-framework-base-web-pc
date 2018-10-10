@@ -12,7 +12,6 @@
       }
     },
     mounted () {
-      console.log('RoleBindUsers mounted')
     },
     methods: {
     }

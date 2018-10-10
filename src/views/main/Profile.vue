@@ -1,16 +1,16 @@
 <template>
   <el-row>
-    <el-col :span="8">
+    <el-col :class="isCollapse ? 'hidden': ''" :span="8">
       <img class="head-pic" @click="showFileUpload" :src="headPic"/>
     </el-col>
-    <el-col :span="16">
+    <el-col :span="16" :class="isCollapse ? 'widthfull': ''">
       <el-row>
-        <el-col :span="18" style="font-size: 0.75rem;color:azure;overflow: hidden;">
-          <i class="glyphicon glyphicon-user"></i>&nbsp;<template v-if="loginUser"> {{loginUser.nickname}}</template>
+        <el-col :span="18" :class="isCollapse ? 'hidden': ''" style="font-size: 13px;color:azure;overflow: hidden;">
+          <i class="glyphicon glyphicon-user"></i>&nbsp;<span v-if="loginUser"> {{loginUser.nickname}}</span>
           <br>
-          <i class="glyphicon glyphicon-lock"></i>&nbsp;<template v-if="loginUser">{{loginUser.additionalAttr.role.name}}</template>
+          <i class="glyphicon glyphicon-lock"></i>&nbsp;<span v-if="loginUser">{{loginUser.additionalAttr.role.name}}</span>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="6" :class="isCollapse ? 'widthfull': ''">
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
               <i class="el-icon-setting" style="color: rgb(255, 255, 255);"></i>
@@ -39,6 +39,11 @@
   export default {
     components: {FileUpload, UserUpdatePasswordCurrent},
     name: 'Profile',
+    props: {
+      isCollapse: {
+        default: false
+      }
+    },
     data () {
       return {
       }
@@ -106,5 +111,12 @@
   }
   .message:hover{
     cursor: pointer;
+  }
+  .hidden{
+    display: none;
+  }
+  .widthfull{
+    width: 100%;
+    text-align: center;
   }
 </style>

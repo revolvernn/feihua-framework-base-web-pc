@@ -84,12 +84,17 @@
             dict: 'gender'
           },
           {
+            name: 'dataOfficeName',
+            label: '机构'
+          },
+          {
             name: 'locked',
             label: '是否锁定',
             dict: 'yes_no'
           },
           {
             label: '操作',
+            width: '270',
             buttons: [
               {
                 label: '编辑',
@@ -122,6 +127,7 @@
           locked: '',
           dataOfficeId: '',
           nickname: '',
+          includeOfficeName: true,
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -238,8 +244,8 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-
+.wrapper .el-collapse{
+  padding: 0 10px;
 }
 .el-main{
   padding:0;

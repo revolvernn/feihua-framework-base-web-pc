@@ -101,7 +101,11 @@
                   self.addLoading = false
                 })
                 .catch(function (response) {
-                  self.$message.error('字典添加失败，请稍后再试')
+                  if (response.response.status === 409) {
+                    self.$message.error('字典添加失败，类型已存在')
+                  } else {
+                    self.$message.error('字典添加失败，请稍后再试')
+                  }
                   self.addLoading = false
                 })
             } else {

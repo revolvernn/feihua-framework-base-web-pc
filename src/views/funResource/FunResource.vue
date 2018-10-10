@@ -1,14 +1,6 @@
 <template>
 
   <div class="wrapper">
-    <el-popover
-      ref="searchOfficeSelect"
-      placement="right"
-      trigger="click">
-      <el-scrollbar wrapStyle="max-height:500px;">
-        <office-tree v-on:nodeClick="officeTreeNodeClick"></office-tree>
-      </el-scrollbar>
-    </el-popover>
     <el-container>
       <el-aside width="200px">
         <el-scrollbar style="height: 100%;" wrapStyle="height:100%;overflow:auto;" >
@@ -29,7 +21,7 @@
                 <self-dict-select v-model="searchFormModel.isShow" type="yes_no"></self-dict-select>
               </el-form-item>
               <el-form-item label="父级">
-                <el-input  v-model="searchFormParentName" :readonly="true" clearable></el-input>
+                <fun-resource-input-select ref="funResourceinput" v-model="searchFormModel.parentId"></fun-resource-input-select>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
@@ -53,9 +45,11 @@
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   import { getDictByValueSync } from '@/utils/dictUtils.js'
   import OfficeTree from '@/views/office/OfficeTree.vue'
+  import FunResourceInputSelect from '@/views/funResource/FunResourceInputSelect'
   export default {
     name: 'FunResource',
     components: {
+      FunResourceInputSelect,
       OfficeTree,
       SelfDictSelect,
       SelfTable,
@@ -65,6 +59,12 @@
     data () {
       return {
         columns: [
+          {
+            name: 'icon',
+            label: '图标',
+            width: '50',
+            html: this.iconFormatter
+          },
           {
             name: 'name',
             label: '名称'
@@ -80,15 +80,17 @@
             dict: 'yes_no'
           },
           {
-            name: 'icon',
-            label: '图标'
-          },
-          {
             name: 'permissions',
             label: '权限标识'
           },
           {
+            name: 'parentId',
+            label: '父级',
+            formatter: this.dataParentFormatter
+          },
+          {
             label: '操作',
+            width: '150',
             buttons: [
               {
                 label: '编辑',
@@ -105,6 +107,7 @@
           pageNo: 1,
           dataNum: 0
         },
+        tableParent: {},
         // 表格数据
         tableData: [],
         tableLoading: false,
@@ -115,12 +118,11 @@
           isShow: '',
           parentId: '',
           dataOfficeId: '',
+          includeParent: true,
           pageable: true,
           pageNo: 1,
           pageSize: 10
-        },
-        // 搜索的查询条件父级名称显示
-        searchFormParentName: ''
+        }
       }
     },
     mounted () {
@@ -129,7 +131,7 @@
     methods: {
       // 点击树节点事件
       treeNodeClick (data) {
-        this.searchFormParentName = data.name
+        this.$refs.funResourceinput.setLabelName(data.name)
         this.searchFormModel.parentId = data.id
         this.searchBtnClick()
       },
@@ -154,6 +156,7 @@
         this.$http.get('/base/functionResources', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
+            self.tableParent = response.data.data.parent
             self.tableData = content
             self.page.dataNum = response.data.data.page.dataNum
             self.tableLoading = false
@@ -162,6 +165,7 @@
             if (error.response.status === 404) {
               self.tableData = []
               self.page.dataNum = 0
+              self.tableParent = {}
             }
             self.tableLoading = false
           })
@@ -203,34 +207,34 @@
         loadDataControl.add(this.$store, 'FunResourceAddLoadData=true')
         this.$router.push('/Main/FunResourceAdd')
       },
-      officeTreeNodeClick (data) {
-        this.searchFormModel.dataOfficeId = data.id
-        this.searchFormOfficeName = data.name
-      },
       typeFormatter (row) {
         let dict = getDictByValueSync(this, 'funResource_type', row.type)
         return dict ? dict.name : null
       },
-      disabledFormatter (row) {
-        let dict = getDictByValueSync(this, 'yes_no', row.disabled)
-        return dict ? dict.name : null
+      dataParentFormatter (row) {
+        let name = null
+        if (this.tableParent && this.tableParent[row.parentId]) {
+          name = this.tableParent[row.parentId].name || null
+        }
+        return name
+      },
+      iconFormatter (row) {
+        if (row.icon) {
+          return '<i class="' + row.icon + '"></i>'
+        }
+        return ''
       }
     },
     watch: {
-      searchFormParentName (value) {
-        if (value === '') {
-          this.searchFormModel.parentId = ''
-        }
-      }
     }
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-
-}
+  .wrapper .el-collapse{
+    padding: 0 10px;
+  }
 .el-main{
   padding:0;
 }
