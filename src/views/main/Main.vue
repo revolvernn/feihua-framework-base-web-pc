@@ -17,6 +17,7 @@
         </el-main>
       </el-container>
     </el-aside>
+    <el-main>
     <el-container style="overflow: hidden;">
       <el-header style="padding: 0;" height="34">
         <visited-views :menus="menus" :is-collapse="isCollapse" v-on:collapseLeftMenu="collapseLeftMenu"></visited-views>
@@ -30,6 +31,7 @@
         </transition>
       </el-main>
     </el-container>
+    </el-main>
   </el-container>
 </template>
 <script>

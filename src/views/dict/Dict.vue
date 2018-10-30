@@ -224,7 +224,7 @@
             })
             .catch(function (error) {
               if (error.response.status === 404) {
-                self.$message.success('删除失败，请刷新数据再试')
+                self.$message.error('删除失败，请刷新数据再试')
               }
             })
         })

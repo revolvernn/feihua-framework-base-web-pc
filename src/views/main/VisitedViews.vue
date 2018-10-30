@@ -16,13 +16,16 @@
       <i class="el-icon-d-arrow-right"></i>
     </button>
     <div class="btn-group roll-nav roll-right">
-      <button class="dropdown J_tabClose"  @click.stop="toggleOperationShow">
+      <button class="dropdown J_tabClose guide-url-collect-1"  @click.stop="toggleOperationShow">
         操作
         <span style="top:.2rem" class="glyphicon glyphicon-chevron-down"></span>
       </button>
-      <ul class="dropdown-menu" v-bind:style="{display: operationShow ? 'block' : 'none'}">
+      <ul class="dropdown-menu" v-bind:style="{display: operationShow ? 'block' : 'none',left:'-41px'}">
         <li>
           <a @click="afterAdd">定位当前选项卡</a>
+        </li>
+        <li :class="canAddUrlCollect ? '' : 'canNotAddUrlCollect'">
+          <a class="guide-url-collect-2" @click="addUrlCollect">收藏当前选项卡</a>
         </li>
         <li class="divider"></li>
         <li><a @click="closeOthers">关闭其他选项卡</a>
@@ -52,7 +55,9 @@
         // tab的左右位置
         marginLeft: 0,
         // 操作菜单显示
-        operationShow: false
+        operationShow: false,
+        canAddUrlCollect: false,
+        loadingUrlCollect: false
       }
     },
     computed: {
@@ -181,19 +186,11 @@
         if (menu == null) {
           menu = this.getMenuByPath(this.menus, decodeURIComponent(this.$route.fullPath))
         }
-        if (!menu && this.$route.meta.menu) {
-          menu = this.$route.meta.menu
-          if (menu == null) {
-            return
-          }
-          let matchedRoutes = this.$route.matched
-          if (matchedRoutes && matchedRoutes.length > 0) {
-            menu.path = this.$route.path
-            menu.id = matchedRoutes[matchedRoutes.length - 1].path
-          } else {
-            menu.path = this.$route.path
-            menu.id = this.$route.path
-          }
+        if (!menu) {
+          menu = this.routeMenu()
+        }
+        if (!menu) {
+          return
         }
         let flag = currentMenu.id === menu.id
         if (flag) {
@@ -248,24 +245,91 @@
         if (menu == null) {
           menu = this.getMenuByPath(this.menus, decodeURIComponent(this.$route.fullPath))
         }
-        if (!menu && this.$route.meta.menu) {
-          menu = this.$route.meta.menu
-          if (menu == null) {
-            return
-          }
-          let matchedRoutes = this.$route.matched
-          if (matchedRoutes && matchedRoutes.length > 0) {
-            menu.path = this.$route.path
-            menu.id = matchedRoutes[matchedRoutes.length - 1].path
-          } else {
-            menu.path = this.$route.path
-            menu.id = this.$route.path
-          }
+
+        if (!menu) {
+          menu = this.routeMenu()
         }
         if (menu) {
           this.$store.commit('addVisitedViews', menu)
           let self = this
           self.afterAdd()
+        }
+      },
+      routeMenu () {
+        let menu = null
+        if (this.$route.meta.menu) {
+          menu = this.$route.meta.menu
+          let matchedRoutes = this.$route.matched
+          menu.path = this.$route.path
+          menu.id = this.$route.path
+          if (matchedRoutes && matchedRoutes.length > 0) {
+            menu.id = matchedRoutes[matchedRoutes.length - 1].path
+          }
+        }
+        return menu
+      },
+      // 收藏
+      addUrlCollect () {
+        let self = this
+        if (self.canAddUrlCollect === false) {
+          return
+        }
+        let path = this.$route.path
+        let menu = this.getMenuByPath(this.menus, path)
+        if (menu == null) {
+          menu = this.getMenuByPath(this.menus, decodeURIComponent(this.$route.fullPath))
+        }
+        if (!menu) {
+          menu = this.routeMenu()
+        }
+        if (menu) {
+          this.$http.post('/base/urlcollect', {
+            url: menu.path,
+            urlType: 'admin',
+            name: menu.name,
+            remark: '后台点击收藏添加',
+            icon: menu.icon ? menu.icon : null,
+            iconType: 'class_icon'
+          }).then(res => {
+            self.$message.info('添加收藏成功')
+          }).catch(() => {
+            self.$message.error('添加收藏失败')
+          })
+        } else {
+          self.$message.error('无可用收藏路径')
+        }
+      },
+      // 判断是否可以收藏
+      isCanAddUrlCollect () {
+        let self = this
+        if (self.loadingUrlCollect === true) {
+          return
+        }
+        self.loadingUrlCollect = true
+        let path = this.$route.path
+        let menu = this.getMenuByPath(this.menus, path)
+        if (menu == null) {
+          menu = this.getMenuByPath(this.menus, decodeURIComponent(this.$route.fullPath))
+        }
+        if (!menu) {
+          menu = this.routeMenu()
+        }
+        if (menu) {
+          self.$http.get('/base/urlcollect/self', {url: menu.path, urlType: 'admin'})
+            .then(res => {
+              self.canAddUrlCollect = false
+              self.loadingUrlCollect = false
+            }).catch((error) => {
+              if (error.response.status === 404) {
+                self.canAddUrlCollect = true
+              } else {
+                self.canAddUrlCollect = false
+              }
+              self.loadingUrlCollect = false
+            })
+        } else {
+          self.canAddUrlCollect = false
+          self.loadingUrlCollect = false
         }
       }
     },
@@ -276,17 +340,31 @@
         self.afterAdd()
       })
       $('body').on('click', function () {
-        if (self.operationShow === true) {
+        let driverOverlay = $('#driver-page-overlay')
+        if (self.operationShow === true && driverOverlay.length === 0) {
           self.operationShow = false
         }
       })
+
+      console.log('mounted')
+      this.canAddUrlCollect = false
+      this.isCanAddUrlCollect()
     },
     watch: {
       $route () {
         this.add()
+        this.canAddUrlCollect = false
+        this.isCanAddUrlCollect()
       },
       menus () {
         this.add()
+        this.canAddUrlCollect = false
+        this.isCanAddUrlCollect()
+      },
+      operationShow (val) {
+        if (val === true) {
+          this.isCanAddUrlCollect()
+        }
       }
     }
   }
@@ -298,7 +376,7 @@
     position: relative;
     height: 34px;
     background: #fafafa;
-    line-height: 34px;
+    line-height: 32px;
     z-index:1;
     border-bottom: solid 2px #ededed;
     font-size:14px;
@@ -306,11 +384,12 @@
   .content-tabs .roll-nav, .page-tabs-list {
     position: absolute;
     width: 34px;
-    height: 32px;
+    height: 34px;
     text-align: center;
     color: #999;
     z-index: 2;
-    top: 0
+    top: 0;
+    border-bottom: solid 2px #ededed;
   }
   .content-tabs .roll-left{
     left: 34px;
@@ -360,7 +439,8 @@
   .page-tabs a:hover {
     /*color: #fff;*/
     background: #089ded;
-    cursor: pointer
+    cursor: pointer;
+    height: 34px;
   }
   .roll-right.J_tabRight {
     right: 80px
@@ -404,11 +484,12 @@
   }
   .page-tabs a.active {
     background: #089ded;
-    color: #fff
+    color: #fff;
+    height: 34px;
   }
   .page-tabs a.active i:hover, .page-tabs a.active:hover {
     background: #089ded;
-    color: #fff
+    color: #fff;
   }
   .page-tabs a.active:hover i {
     color: #fff
@@ -438,6 +519,11 @@
   .dropdown-menu>li:hover{ color:#000;}
   .dropdown-menu>li>a.font-bold {
     font-weight: 600;
+  }
+  .dropdown-menu>li.canNotAddUrlCollect,.dropdown-menu>li.canNotAddUrlCollect>a,.dropdown-menu>li.canNotAddUrlCollect:hover,dropdown-menu>li.canNotAddUrlCollect>a:hover{
+    color: #e3e3e3;
+    font-weight: 400;
+    background-color: #fff;
   }
   nav.page-tabs {
     width: 100000px;

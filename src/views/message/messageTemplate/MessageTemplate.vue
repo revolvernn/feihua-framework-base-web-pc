@@ -9,12 +9,12 @@
               <el-form-item label="名称">
                 <el-input  v-model="searchFormModel.name"></el-input>
               </el-form-item>
-              <el-form-item label="分类">
-                <self-dict-select v-model="searchFormModel.type" type="file_type"></self-dict-select>
+              <el-form-item label="编码">
+                <el-input  v-model="searchFormModel.code"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
-                <el-button type="primary" @click="addTableRowClick">上传</el-button>
+                <el-button type="primary" @click="addTableRowClick">添加</el-button>
               </el-form-item>
             </el-form>
           </el-collapse-item>
@@ -23,23 +23,21 @@
       </el-main>
     </el-container>
 
-    <file-upload ref="fileupload" :onSuccess="fileUploadSucess"></file-upload>
-    <file-download-dialog ref="filedownload"></file-download-dialog>
   </div>
 </template>
 
 <script>
+  import SelfPage from '@/components/SelfPage.vue'
   import SelfTable from '@/components/SelfTable.vue'
+  import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
-  import FileUpload from '@/components/FileUpload'
-  import FileDownloadDialog from '@/components/FileDownloadDialog'
   export default {
-    name: 'File',
+    name: 'DataScope',
     components: {
-      FileDownloadDialog,
-      FileUpload,
       SelfDictSelect,
-      SelfTable},
+      SelfTable,
+      SelfPage
+    },
     data () {
       return {
         columns: [
@@ -48,40 +46,20 @@
             label: '名称'
           },
           {
-            name: 'filename',
-            label: '文件原名称'
+            name: 'code',
+            label: '编码'
           },
           {
-            name: 'type',
-            label: '分类',
-            dict: 'file_type'
-          },
-          {
-            name: 'downloadNum',
-            label: '下载数'
-          },
-          {
-            name: 'duration',
-            label: '耗时(s)'
-          },
-          {
-            name: 'filePath',
-            label: '路径'
-          },
-          {
-            name: 'createAt',
-            label: '创建时间'
+            name: 'content',
+            label: '内容'
           },
           {
             label: '操作',
+            width: '200',
             buttons: [
               {
-                label: '修改名称',
-                click: this.updateName
-              },
-              {
-                label: '下载',
-                click: this.downloadFile
+                label: '编辑',
+                click: this.editTableRowClick
               },
               {
                 label: '删除',
@@ -99,7 +77,7 @@
         // 搜索的查询条件
         searchFormModel: {
           name: '',
-          type: '',
+          code: '',
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -121,7 +99,7 @@
           self.searchFormModel.pageNo = pageNo
         }
         self.tableLoading = true
-        this.$http.get('/base/files', self.searchFormModel)
+        this.$http.get('/base/message/templates', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
             self.tableData = content
@@ -145,36 +123,9 @@
       pageNoChange (val) {
         this.loadTableData(val)
       },
-      // 修改名称
-      updateName (index, row) {
-        let self = this
-        this.$prompt('请输入名称', '提示', {
-          inputErrorMessage: '请输入名称',
-          inputValidator: function (value) {
-            return !!value
-          }
-        }).then(({value}) => {
-          this.$http.put('/base/file/' + row.id, {name: value})
-            .then(function (response) {
-              self.$message.success('更新成功')
-              // 重新加载数据
-              self.searchBtnClick()
-            }).catch()
-        })
-      },
-      // 下载
-      downloadFile (index, row) {
-        let self = this
-        this.$http.put('/base/file/' + row.id + '/download')
-          .then(function (response) {
-            self.$refs.filedownload.show()
-            self.$refs.filedownload.setPath(row.filePath)
-          })
-          .catch(function (error) {
-            if (error.response.status === 404) {
-              self.$message.success('下载失败，数据不存在，请刷新数据再试')
-            }
-          })
+      // tablb 表格编辑行
+      editTableRowClick (index, row) {
+        this.$router.push('/Main/MessageTemplateEdit/' + row.id)
       },
       // tablb 表格删除行
       deleteTableRowClick (index, row) {
@@ -182,7 +133,7 @@
         this.$confirm('确定要删除吗, 是否继续?', '提示', {
           type: 'warning'
         }).then(() => {
-          this.$http.delete('/base/file/' + row.id)
+          this.$http.delete('/base/message/template/' + row.id)
             .then(function (response) {
               self.$message.success('删除成功')
               // 重新加载数据
@@ -195,13 +146,9 @@
             })
         })
       },
-      // 上传
       addTableRowClick () {
-        this.$refs.fileupload.show()
-      },
-      fileUploadSucess () {
-        this.searchBtnClick()
-        this.$refs.fileupload.hide()
+        loadDataControl.add(this.$store, 'MessageTemplateAddLoadData=true')
+        this.$router.push('/Main/MessageTemplateAdd')
       }
     },
     watch: {

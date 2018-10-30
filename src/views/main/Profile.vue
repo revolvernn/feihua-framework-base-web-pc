@@ -5,10 +5,10 @@
     </el-col>
     <el-col :span="16" :class="isCollapse ? 'widthfull': ''">
       <el-row>
-        <el-col :span="18" :class="isCollapse ? 'hidden': ''" style="font-size: 13px;color:azure;overflow: hidden;">
-          <i class="glyphicon glyphicon-user"></i>&nbsp;<span v-if="loginUser"> {{loginUser.nickname}}</span>
+        <el-col :span="18" :class="isCollapse ? 'hidden': ''" style="font-size: 0.75rem;color:azure;overflow: hidden;">
+          <i class="glyphicon glyphicon-user"></i>&nbsp;<span class="login-username" v-if="loginUser" @click="personalDetailDialogVisible = true"> {{loginUser.nickname}}</span>
           <br>
-          <i class="glyphicon glyphicon-lock"></i>&nbsp;<span v-if="loginUser">{{loginUser.additionalAttr.role.name}}</span>
+          <i class="glyphicon glyphicon-lock"></i>&nbsp;<span v-if="loginUser"> {{loginUser.additionalAttr.role.name}}</span>
         </el-col>
         <el-col :span="6" :class="isCollapse ? 'widthfull': ''">
           <el-dropdown @command="handleCommand">
@@ -29,6 +29,60 @@
     </el-col>
     <file-upload ref="fileupload" :on-success="uploadSuccess" :data="{path: 'userHeader'}" accept="image/gif, image/jpeg, image/png" :limit="1" title="头像上传"></file-upload>
     <UserUpdatePasswordCurrent ref="updatepasswordDialog"></UserUpdatePasswordCurrent>
+    <el-dialog class="personalDetailDialog"
+      title="个人信息"
+      :visible.sync="personalDetailDialogVisible"
+      width="30%">
+      <el-container>
+        <el-aside width="150px">
+          <img class="personal-head-pic" :src="headPic"/>
+        </el-aside>
+        <el-main v-if="loginUser">
+          <el-row>
+            <el-col :span="10">帐号</el-col>
+            <el-col :span="2"></el-col>
+            <el-col :span="12">{{loginUser.account}}</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="10">姓名</el-col>
+            <el-col :span="2"></el-col>
+            <el-col :span="12">{{loginUser.nickname}}</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="10">姓别</el-col>
+            <el-col :span="2"></el-col>
+            <el-col :span="12">{{getDictLabel('gender',loginUser.gender)}}</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="10">手机</el-col>
+            <el-col :span="2"></el-col>
+            <el-col :span="12">{{loginUser.mobile}}</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="10">所在机构</el-col>
+            <el-col :span="2"></el-col>
+            <el-col :span="12">{{loginUser.additionalAttr.office ? loginUser.additionalAttr.office.name : ''}}</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="10">当前角色</el-col>
+            <el-col :span="2"></el-col>
+            <el-col :span="12">{{loginUser.additionalAttr.role ? loginUser.additionalAttr.role.name : ''}}</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="10">当前角色编码</el-col>
+            <el-col :span="2"></el-col>
+            <el-col :span="12">{{loginUser.additionalAttr.role ? loginUser.additionalAttr.role.code : ''}}</el-col>
+          </el-row>
+          <el-row></el-row>
+          <el-row></el-row>
+          <el-row></el-row>
+
+        </el-main>
+      </el-container>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="personalDetailDialogVisible = false">关 闭</el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -36,6 +90,7 @@
   import { mapGetters } from 'vuex'
   import FileUpload from '@/components/FileUpload.vue'
   import UserUpdatePasswordCurrent from '@/views/user/UserUpdatePasswordCurrent.vue'
+  import { getDictByValueSync } from '@/utils/dictUtils.js'
   export default {
     components: {FileUpload, UserUpdatePasswordCurrent},
     name: 'Profile',
@@ -46,6 +101,7 @@
     },
     data () {
       return {
+        personalDetailDialogVisible: false
       }
     },
     methods: {
@@ -79,6 +135,10 @@
             self.$message.error('头像上传失败，请重新尝试')
           })
         // 修改头像信息
+      },
+      getDictLabel (type, value) {
+        let dict = getDictByValueSync(this, type, value)
+        return dict ? dict.name : null
       }
     },
     computed: {
@@ -94,6 +154,9 @@
       }
     },
     watch: {
+      // 防止刷新的时候没有数据
+      loginUser () {
+      }
     }
   }
 </script>
@@ -118,5 +181,18 @@
   .widthfull{
     width: 100%;
     text-align: center;
+  }
+  .login-username:hover{
+    cursor: pointer;
+    color: #DAE9FF;
+  }
+  .personalDetailDialog .el-row{
+    padding: .6em 0;
+  }
+  .personalDetailDialog .personal-head-pic{
+    width: 100%;
+  }
+  .personalDetailDialog .el-row .el-col:first-child {
+    font-weight: bold;
   }
 </style>

@@ -19,6 +19,10 @@
              <template v-else-if="btn.label">
                {{btn.label}}
              </template>
+             <template v-else-if="btn.html">
+               <div v-if="typeof btn.html == 'function'" v-html="btn.html(scope.row)"></div>
+               <div v-else v-html="btn.html"></div>
+             </template>
              <template v-else>
                <div v-if="item.html" v-html="item.html(scope.row)"></div>
                <template v-else>
