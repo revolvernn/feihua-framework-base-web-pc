@@ -29,7 +29,7 @@ const router = new Router({
         {
           path: 'Home',
           name: 'Home',
-          component: null
+          component: _import('home/Home')
         },
         {
           path: 'Dict',
@@ -268,6 +268,64 @@ const router = new Router({
           name: 'WeixinMenuAdd',
           component: _import('weixin/menu/WeixinMenuAdd'),
           meta: { menu: {name: '微信菜单添加'}, keepAlive: true }
+        },
+        // 日历相关
+        {
+          path: 'CalendarSetting',
+          name: 'CalendarSetting',
+          component: _import('calendar/CalendarSetting')
+        },
+        {
+          path: 'CalendarSetting/CalendarSettingAdd/:date',
+          name: 'CalendarSettingAdd',
+          component: _import('calendar/CalendarSettingAdd'),
+          meta: { menu: {name: '日期扩展添加'}, keepAlive: true }
+        },
+        {
+          path: 'CalendarSetting/CalendarSettingEdit/:id',
+          name: 'CalendarSettingEdit',
+          component: _import('calendar/CalendarSettingEdit'),
+          meta: { menu: {name: '日期扩展修改'}, keepAlive: true }
+        },
+        {
+          path: 'CalendarSetting/CalendarView',
+          name: 'CalendarView',
+          component: _import('calendar/CalendarView')
+        },
+        // 消息相关
+        {
+          path: 'Message',
+          name: 'Message',
+          component: _import('message/Message')
+        },
+        {
+          path: 'MessageAdd',
+          name: 'MessageAdd',
+          component: _import('message/MessageAdd'),
+          meta: { menu: {name: '消息添加'}, keepAlive: true }
+        },
+        {
+          path: 'MessageEdit/:id',
+          name: 'MessageEdit',
+          component: _import('message/MessageEdit'),
+          meta: { menu: {name: '消息修改'}, keepAlive: true }
+        },
+        {
+          path: 'MessageTemplate',
+          name: 'MessageTemplate',
+          component: _import('message/messageTemplate/MessageTemplate')
+        },
+        {
+          path: 'MessageTemplateAdd',
+          name: 'MessageTemplateAdd',
+          component: _import('message/messageTemplate/MessageTemplateAdd'),
+          meta: { menu: {name: '消息模板添加'}, keepAlive: true }
+        },
+        {
+          path: 'MessageTemplateEdit/:id',
+          name: 'MessageTemplateEdit',
+          component: _import('message/messageTemplate/MessageTemplateEdit'),
+          meta: { menu: {name: '消息模板修改'}, keepAlive: true }
         }
       ]
     }

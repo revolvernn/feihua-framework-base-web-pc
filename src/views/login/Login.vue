@@ -122,7 +122,8 @@
       },
       // 加载新的验证码
       changeCaptcha () {
-        this.captchaUrl = '/api/captcha?t=' + new Date().getTime()
+        // baseurl 也可以这么取 this.$config.httpBaseURL
+        this.captchaUrl = this.$http.getBaseUrl() + '/captcha?t=' + new Date().getTime()
       }
     }
   }

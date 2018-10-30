@@ -145,11 +145,15 @@ export function del (url, params = {}) {
     })
   })
 }
+export function getBaseUrl () {
+  return Axios.defaults.baseURL
+}
 const http = {
   get: get,
   post: post,
   delete: del,
   put: put,
-  getSync: getSync
+  getSync: getSync,
+  getBaseUrl: getBaseUrl
 }
 export default http

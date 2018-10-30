@@ -10,12 +10,12 @@
 </script>
 <style>
   html,body,#app{
-    height:100%;
+    height:100% !important;
     margin: 0;
     padding: 0;
   }
   html {
-    font-size: 100%;
+    font-size: 100% !important;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
 </style>
