@@ -146,5 +146,7 @@
 <style scoped>
 .wrapper{
   padding:1.5rem;
+  overflow: auto;
+  height: 100%;
 }
 </style>

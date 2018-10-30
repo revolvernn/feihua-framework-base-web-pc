@@ -269,6 +269,24 @@ const router = new Router({
           component: _import('weixin/menu/WeixinMenuAdd'),
           meta: { menu: {name: '微信菜单添加'}, keepAlive: true }
         },
+        // 微信相关
+        {
+          path: 'Weixin/Account',
+          name: 'WeixinAccount',
+          component: _import('weixin/account/WeixinAccount')
+        },
+        {
+          path: 'Weixin/Account/WeixinAccountAdd',
+          name: 'WeixinAccountAdd',
+          component: _import('weixin/account/WeixinAccountAdd'),
+          meta: { menu: {name: '公众账号添加'}, keepAlive: true }
+        },
+        {
+          path: 'Weixin/Account/WeixinAccountEdit/:id',
+          name: 'WeixinAccountEdit',
+          component: _import('weixin/account/WeixinAccountEdit'),
+          meta: { menu: {name: '公众账号修改'}, keepAlive: true }
+        },
         // 日历相关
         {
           path: 'CalendarSetting',
