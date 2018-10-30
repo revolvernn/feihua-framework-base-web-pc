@@ -12,10 +12,10 @@
           <el-collapse-item title="查询条件" name="1">
 
             <el-form ref="searchform" :model="searchFormModel" :inline="true" size="small">
-              <el-form-item label="姓名">
+              <el-form-item label="姓名" prop="nickname">
                 <el-input  v-model="searchFormModel.nickname"></el-input>
               </el-form-item>
-              <el-form-item label="是否锁定">
+              <el-form-item label="是否锁定" prop="locked">
                 <self-dict-select v-model="searchFormModel.locked" type="yes_no"></self-dict-select>
               </el-form-item>
               <el-form-item label="机构">
@@ -25,6 +25,7 @@
               <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
                 <el-button type="primary" @click="addTableRowClick">添加</el-button>
+                <el-button @click="resetFormClick">重置</el-button>
               </el-form-item>
             </el-form>
           </el-collapse-item>
@@ -143,6 +144,11 @@
         this.$refs.officeinput.setLabelName(data.name)
         this.searchFormModel.dataOfficeId = data.id
         this.searchBtnClick()
+      },
+      resetFormClick() {
+        this.$refs.searchform.resetFields()
+        this.$refs.officeinput.setLabelName(null)
+        this.searchFormModel.dataOfficeId = null
       },
       // 查询按钮点击事件
       searchBtnClick () {

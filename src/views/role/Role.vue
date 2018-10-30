@@ -11,13 +11,13 @@
         <el-collapse value="1">
           <el-collapse-item title="查询条件" name="1">
             <el-form ref="searchForm" :model="searchFormModel" :inline="true" size="small">
-              <el-form-item label="名称">
+              <el-form-item label="名称" prop="name">
                 <el-input  v-model="searchFormModel.name"></el-input>
               </el-form-item>
-              <el-form-item label="类型">
+              <el-form-item label="类型" prop="type">
                 <self-dict-select v-model="searchFormModel.type" type="role_type"></self-dict-select>
               </el-form-item>
-              <el-form-item label="是否禁用">
+              <el-form-item label="是否禁用" prop="disabled">
                 <self-dict-select v-model="searchFormModel.disabled" type="yes_no"></self-dict-select>
               </el-form-item>
               <el-form-item label="机构">
@@ -31,6 +31,7 @@
               <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
                 <el-button type="primary" @click="addTableRowClick">添加</el-button>
+                <el-button @click="resetFormClick">重置</el-button>
               </el-form-item>
             </el-form>
           </el-collapse-item>
@@ -149,6 +150,13 @@
         this.$refs.roleinput.setLabelName(data.name)
         this.searchFormModel.parentId = data.id
         this.searchBtnClick()
+      },
+      resetFormClick() {
+        this.$refs.searchForm.resetFields()
+        this.$refs.officeinput.setLabelName(null)
+        this.$refs.roleinput.setLabelName(null)
+        this.searchFormModel.parentId = null
+        this.searchFormModel.dataOfficeId = null
       },
       // 查询按钮点击事件
       searchBtnClick () {

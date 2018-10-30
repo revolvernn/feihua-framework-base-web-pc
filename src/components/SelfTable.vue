@@ -5,7 +5,7 @@
      size="mini"
      style="width: 100%" :data="tableData">
      <template  v-for="item in columns">
-       <el-table-column v-if="item.buttons" :prop="item.name" :label="item.label" :key="item.name" :formatter="item.formatter" :width="item.width">
+       <el-table-column v-if="item.buttons" :prop="item.name" :label="item.label" :key="item.name" :formatter="item.formatter" :width="item.width" :fixed="item.fixed">
          <template slot-scope="scope">
            <el-button v-for="btn in item.buttons"  :key="scope.$index"
                       @click.native.prevent="btn.click(scope.$index, scope.row)"
