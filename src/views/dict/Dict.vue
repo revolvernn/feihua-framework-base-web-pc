@@ -11,16 +11,16 @@
         <el-collapse value="1">
           <el-collapse-item title="查询条件" name="1">
             <el-form ref="searchForm" :model="searchFormModel" :inline="true" size="small">
-              <el-form-item label="字典值">
+              <el-form-item label="字典值" prop="value">
                 <el-input  v-model="searchFormModel.value"></el-input>
               </el-form-item>
-              <el-form-item label="字典名">
+              <el-form-item label="字典名" prop="name">
                 <el-input  v-model="searchFormModel.name"></el-input>
               </el-form-item>
-              <el-form-item label="字典类型">
+              <el-form-item label="字典类型" prop="type">
                 <el-input  v-model="searchFormModel.type"></el-input>
               </el-form-item>
-              <el-form-item label="是否系统">
+              <el-form-item label="是否系统" prop="isSystem">
                 <self-dict-select v-model="searchFormModel.isSystem" type="yes_no"></self-dict-select>
               </el-form-item>
               <el-form-item label="父级">
@@ -30,6 +30,7 @@
               <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
                 <el-button type="primary" @click="addTableRowClick">添加</el-button>
+                <el-button @click="resetFormClick">重置</el-button>
               </el-form-item>
             </el-form>
           </el-collapse-item>
@@ -148,6 +149,11 @@
         this.$refs.dictinput.setLabelName(data.name)
         this.searchFormModel.parentId = data.id
         this.searchBtnClick()
+      },
+      resetFormClick() {
+        this.$refs['searchForm'].resetFields()
+        this.$refs.dictinput.setLabelName(null)
+        this.searchFormModel.parentId = null
       },
       // 查询按钮点击事件
       searchBtnClick () {
