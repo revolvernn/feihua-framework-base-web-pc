@@ -3,7 +3,7 @@
   <div class="wrapper">
     <el-container>
       <el-main>
-        <self-table :columns="columns" :tableData="tableData" >
+        <self-table :columns="columns" :tableData="tableData" :table-loading="tableLoading">
         </self-table>
       </el-main>
     </el-container>
@@ -25,6 +25,11 @@
     data() {
       return {
         columns: [
+          {
+            name: 'type',
+            label: '类型',
+            dict: 'weixin_account_type'
+          },
           {
             name: 'template_id',
             label: '模板ID'
@@ -53,6 +58,7 @@
         // 表格数据
         tableData: [],
         tableLoading: false,
+        searchFormModel:{},
         dialogVisible: false,
         dialogValue: null
       }
@@ -68,10 +74,10 @@
         this.$refs['searchForm'].resetFields()
       },
       // 加载表 格数据
-      loadTableData(which) {
+      loadTableData(id) {
         let self = this
         self.tableLoading = true
-        this.$http.get('/weixinaccount/wxalltemplates/' + which, self.searchFormModel)
+        this.$http.get('/weixinaccount/wxalltemplates/' + id, self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
             self.tableData = content

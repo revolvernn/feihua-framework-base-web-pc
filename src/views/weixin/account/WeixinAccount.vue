@@ -211,7 +211,7 @@
       },
       templatesTableRowClick(index, row){
         let self = this
-        this.$router.push('/Main/Weixin/Account/Templtes/' + row.which)
+        this.$router.push('/Main/Weixin/Account/Templtes/' + row.id)
       },
       addTableRowClick() {
         loadDataControl.add(this.$store, 'WeixinAccountAddLoadData=true')
