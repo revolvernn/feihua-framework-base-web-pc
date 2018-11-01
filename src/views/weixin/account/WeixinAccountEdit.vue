@@ -57,7 +57,7 @@
   export default {
     name: 'WeixinAccountEdit',
     components: {SelfDictSelect},
-    data() {
+    data () {
       return {
         form: {
           account: null,
@@ -122,16 +122,12 @@
         }
       }
     },
-    mounted() {
-      this.id = this.$route.params.id;
+    mounted () {
+      this.id = this.$route.params.id
       this.loadEditData(this.id)
     },
     methods: {
-      checkTypeF(){
-        debugger
-        console.log(this.selected);
-      },
-      loadEditData(id) {
+      loadEditData (id) {
         this.resetForm()
         let self = this
         self.formDataLoading = true
@@ -155,10 +151,10 @@
             self.formDataLoading = false
             return Promise.resolve(content)
           }).catch(function (response) {
-          self.formDataLoading = false
-        })
+            self.formDataLoading = false
+          })
       },
-      updateBtnClick() {
+      updateBtnClick () {
         let self = this
         if (self.addLoading === false) {
           this.$refs['form'].validate((valid) => {
@@ -185,12 +181,12 @@
           self.$message.info('正在请求中，请耐心等待')
         }
       },
-      resetForm() {
+      resetForm () {
         this.$refs['form'].resetFields()
       }
     },
     // tab切换如果参数不一样，重新加载数据
-    beforeRouteEnter(to, from, next) {
+    beforeRouteEnter (to, from, next) {
       next(vm => {
         // 通过 `vm` 访问组件实例
         if (vm.id !== vm.$route.params.id) {
@@ -199,7 +195,7 @@
         }
       })
     },
-    watch:{
+    watch: {
       'form.type' (value) {
         let self = this
         let _typeLimit = {

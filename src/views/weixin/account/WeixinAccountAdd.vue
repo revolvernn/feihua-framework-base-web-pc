@@ -32,13 +32,13 @@
       <el-form-item label="认证" prop="auth" required>
         <self-dict-select v-model="form.auth" type="weixin_account_auth"/>
       </el-form-item>
-      <el-form-item label="欢迎语类型" prop="templateType"  v-if="typeLimit.templateType" required>
+      <el-form-item label="欢迎语类型" prop="templateType" v-if="typeLimit.templateType" required>
         <self-dict-select v-model="form.templateType" type="weixin_msg_type"/>
       </el-form-item>
       <el-form-item label="欢迎语" prop="template" v-if="typeLimit.template" required>
         <el-input type="textarea" :autosize="{ minRows: 2}" v-model="form.template"></el-input>
       </el-form-item>
-      <el-form-item label="消息类型" prop="msgType"  v-if="typeLimit.msgType" required>
+      <el-form-item label="消息类型" prop="msgType" v-if="typeLimit.msgType" required>
         <self-dict-select v-model="form.msgType" type="mini_msg_type"/>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
@@ -58,7 +58,7 @@
   export default {
     components: {SelfDictSelect},
     name: 'WeixinAccountAdd',
-    data() {
+    data () {
       return {
         form: {
           account: null,
@@ -122,10 +122,10 @@
         }
       }
     },
-    mounted() {
+    mounted () {
     },
     methods: {
-      addBtnClick() {
+      addBtnClick () {
         let self = this
         if (self.addLoading === false) {
           this.$refs['form'].validate((valid) => {
@@ -149,14 +149,14 @@
           self.$message.info('正在请求中，请耐心等待')
         }
       },
-      resetForm() {
+      resetForm () {
         this.$refs['form'].resetFields()
       }
     },
-    beforeRouteEnter(to, from, next) {
+    beforeRouteEnter (to, from, next) {
       next(vm => {
         // 通过 `vm` 访问组件实例
-        let dataControl = 'WeixinMenuAddLoadData=true'
+        let dataControl = 'WeixinAccountAddLoadData=true'
         if (loadDataControl.has(vm.$store, dataControl)) {
           // 重置表单
           vm.resetForm()
@@ -164,7 +164,7 @@
         }
       })
     },
-    watch:{
+    watch: {
       'form.type' (value) {
         let self = this
         let _typeLimit = {

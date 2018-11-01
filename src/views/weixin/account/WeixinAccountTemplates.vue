@@ -14,7 +14,6 @@
 <script>
   import SelfTable from '@/components/SelfTable.vue'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
-  import {getDictByValueSync} from '@/utils/dictUtils.js'
 
   export default {
     name: 'Account',
@@ -22,7 +21,7 @@
       SelfDictSelect,
       SelfTable
     },
-    data() {
+    data () {
       return {
         columns: [
           {
@@ -58,23 +57,23 @@
         // 表格数据
         tableData: [],
         tableLoading: false,
-        searchFormModel:{},
+        searchFormModel: {},
         dialogVisible: false,
         dialogValue: null
       }
     },
-    mounted() {
-      this.loadTableData();
+    mounted () {
+      this.loadTableData()
     },
     methods: {
-      searchBtnClick() {
+      searchBtnClick () {
         this.loadTableData()
       },
-      resetFormClick() {
+      resetFormClick () {
         this.$refs['searchForm'].resetFields()
       },
       // 加载表 格数据
-      loadTableData(id) {
+      loadTableData (id) {
         let self = this
         self.tableLoading = true
         this.$http.get('/weixinaccount/wxalltemplates/' + id, self.searchFormModel)
@@ -89,12 +88,11 @@
             }
             self.tableLoading = false
           })
-      },
-
+      }
     },
     watch: {},
     // tab切换如果参数不一样，重新加载数据
-    beforeRouteEnter(to, from, next) {
+    beforeRouteEnter (to, from, next) {
       next(vm => {
         // 通过 `vm` 访问组件实例
         if (vm.id !== vm.$route.params.id) {
@@ -125,8 +123,4 @@
   }
 </style>
 <style>
-  .el-collapse-item__arrow {
-    /* 由于用了rotate 这个东西不是个正方形所以改变角度的时候会出现滚动条 */
-    margin-right: 20px;
-  }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <el-select value="" :disabled="disabled" v-model="model" v-on:focus="handleFocus($event)" v-on:handleBlur="handleBlur($event)" v-on:change="emitChange" v-on:input="emitInput">
     <el-option label="不限" value="" v-if="showNone"></el-option>
-    <el-option  v-for="item in options" :label="item.name" :value="item.value" :key="item.value" v-if="item.level > 1"></el-option>
+    <el-option  v-for="item in options" :label="item.name" :disabled="item.disabled" :value="item.value" :key="item.value" v-if="item.level > 1"></el-option>
   </el-select>
 </template>
 

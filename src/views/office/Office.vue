@@ -129,7 +129,7 @@
         this.searchFormModel.parentId = data.id
         this.searchBtnClick()
       },
-      resetFormClick() {
+      resetFormClick () {
         this.$refs.searchForm.resetFields()
         this.$refs.officeinput.setLabelName(null)
         this.$refs.areainput.setLabelName(null)
