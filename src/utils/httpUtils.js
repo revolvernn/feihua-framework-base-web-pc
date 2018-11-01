@@ -34,7 +34,7 @@ function handlerError (status, code) {
 }
 
 Axios.interceptors.request.use((config) => {
-  if(!config.dataType || config.dataType!='json'){
+  if (!config.dataType || config.dataType !== 'json') {
     config.data = Qs.stringify(config.data)
   }
   return config
@@ -103,9 +103,9 @@ export function getSync (url, params = {}) {
  * @returns {Promise}
  */
 
-export function post (url, data = {},dataType) {
+export function post (url, data = {}, dataType) {
   return new Promise((resolve, reject) => {
-    Axios.post(url, data,dataType)
+    Axios.post(url, data, dataType)
       .then(response => {
         resolve(response)
       }, err => {
@@ -120,9 +120,9 @@ export function post (url, data = {},dataType) {
  * @returns {Promise}
  */
 
-export function put (url, data = {},dataType) {
+export function put (url, data = {}, dataType) {
   return new Promise((resolve, reject) => {
-    Axios.put(url, data,dataType)
+    Axios.put(url, data, dataType)
       .then(response => {
         resolve(response)
       }, err => {

@@ -72,11 +72,15 @@
           },
           {
             label: '操作',
-            width: '200',
+            width: '300',
             buttons: [
               {
                 label: '查看已读人员',
                 click: this.viewReadPeopleClick
+              },
+              {
+                label: '发送消息',
+                click: this.sendMessageClick
               },
               {
                 label: '编辑',
@@ -85,6 +89,10 @@
               {
                 label: '删除',
                 click: this.deleteTableRowClick
+              },
+              {
+                label: '复制消息',
+                click: this.copyTableRowClick
               }
             ]
           }
@@ -173,10 +181,31 @@
             })
         })
       },
+      // 复制一条消息
+      copyTableRowClick (index, row) {
+        let self = this
+        this.$confirm('确定要复制吗,复制后列表会添加一条相同的待发送消息, 是否继续?', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.$http.delete('/base/message/' + row.id + '/copy')
+            .then(function (response) {
+              self.$message.success('复制成功')
+              // 重新加载数据
+              self.searchBtnClick()
+            })
+            .catch(function (error) {
+              if (error.response.status === 404) {
+                self.$message.error('复制失败，请刷新数据再试')
+              }
+            })
+        })
+      },
       addTableRowClick () {
         loadDataControl.add(this.$store, 'MessageAddLoadData=true')
         this.$router.push('/Main/MessageAdd')
       },
+      // 发送消息
+      sendMessageClick (index, row) {},
       // 查看已读人员
       viewReadPeopleClick (index, row) {
         // to_be_sended 为字典值，代表待发送
