@@ -40,7 +40,6 @@
   import SelfTable from '@/components/SelfTable.vue'
   import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
-  import {getDictByValueSync} from '@/utils/dictUtils.js'
 
   export default {
     name: 'Account',
@@ -49,7 +48,7 @@
       SelfTable,
       SelfPage
     },
-    data() {
+    data () {
       return {
         columns: [
           {
@@ -97,8 +96,8 @@
           },
           {
             label: '操作',
-            fixed: "right",
-            width:'100%',
+            fixed: 'right',
+            width: '200',
             buttons: [
               {
                 label: '编辑',
@@ -137,18 +136,18 @@
         dialogValue: null
       }
     },
-    mounted() {
-      this.loadTableData(1);
+    mounted () {
+      this.loadTableData(1)
     },
     methods: {
-      searchBtnClick() {
+      searchBtnClick () {
         this.loadTableData(1)
       },
-      resetFormClick() {
+      resetFormClick () {
         this.$refs['searchForm'].resetFields()
       },
       // 加载表 格数据
-      loadTableData(pageNo, pageNoChange) {
+      loadTableData (pageNo, pageNoChange) {
         let self = this
         if (pageNo > 0) {
           if (pageNoChange) {
@@ -177,21 +176,21 @@
           })
       },
       // 页面大小改变重新查询数据
-      pageSizeChange(val) {
+      pageSizeChange (val) {
         this.searchFormModel.pageSize = val
         this.searchBtnClick()
       },
       // 页码改变加载对应页码数据
-      pageNoChange(val) {
+      pageNoChange (val) {
         this.page.pageNo = val
         this.loadTableData(val, true)
       },
       // tablb 表格编辑行
-      editTableRowClick(index, row) {
+      editTableRowClick (index, row) {
         this.$router.push('/Main/Weixin/Account/WeixinAccountEdit/' + row.id)
       },
       // tablb 表格删除行
-      deleteTableRowClick(index, row) {
+      deleteTableRowClick (index, row) {
         let self = this
         this.$confirm('确定要删除吗, 是否继续?', '提示', {
           type: 'warning'
@@ -209,11 +208,10 @@
             })
         })
       },
-      templatesTableRowClick(index, row){
-        let self = this
+      templatesTableRowClick (index, row) {
         this.$router.push('/Main/Weixin/Account/Templtes/' + row.id)
       },
-      addTableRowClick() {
+      addTableRowClick () {
         loadDataControl.add(this.$store, 'WeixinAccountAddLoadData=true')
         this.$router.push('/Main/Weixin/Account/WeixinAccountAdd')
       }
