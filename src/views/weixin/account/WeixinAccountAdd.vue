@@ -75,6 +75,11 @@
           templateType: null
         },
         addLoading: false,
+        typeLimit: {
+          msgType: false,
+          template: false,
+          templateType: false
+        },
         formRules: {
           account: [
             {required: true, message: '必填', trigger: 'blur'}
