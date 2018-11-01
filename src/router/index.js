@@ -286,6 +286,12 @@ const router = new Router({
           component: _import('weixin/account/WeixinAccountEdit'),
           meta: { menu: {name: '公众账号修改'}, keepAlive: true }
         },
+        {
+          path: 'Weixin/Account/Templtes/:id',
+          name: 'WeixinAccountTemplates',
+          component: _import('weixin/account/WeixinAccountTemplates'),
+          meta: { menu: {name: '微信账号模板列表'}, keepAlive: true }
+        },
         // 日历相关
         {
           path: 'CalendarSetting',

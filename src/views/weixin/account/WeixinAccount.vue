@@ -107,6 +107,10 @@
               {
                 label: '删除',
                 click: this.deleteTableRowClick
+              },
+              {
+                label: '查看模板',
+                click: this.templatesTableRowClick
               }
             ]
           }
@@ -204,6 +208,10 @@
               }
             })
         })
+      },
+      templatesTableRowClick(index, row){
+        let self = this
+        this.$router.push('/Main/Weixin/Account/Templtes/' + row.id)
       },
       addTableRowClick() {
         loadDataControl.add(this.$store, 'WeixinAccountAddLoadData=true')
