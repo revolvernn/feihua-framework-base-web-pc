@@ -269,7 +269,6 @@ const router = new Router({
           component: _import('weixin/menu/WeixinMenuAdd'),
           meta: { menu: {name: '微信菜单添加'}, keepAlive: true }
         },
-        // 微信相关
         {
           path: 'Weixin/Account',
           name: 'WeixinAccount',
@@ -350,6 +349,12 @@ const router = new Router({
           name: 'MessageTemplateEdit',
           component: _import('message/messageTemplate/MessageTemplateEdit'),
           meta: { menu: {name: '消息模板修改'}, keepAlive: true }
+        },
+        {
+          path: 'ViewReadPeople/:id',
+          name: 'ViewReadPeople',
+          component: _import('message/ViewReadPeople'),
+          meta: { menu: {name: '查看已读人员'}, keepAlive: true }
         }
       ]
     }
