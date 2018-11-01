@@ -145,7 +145,7 @@
         this.searchFormModel.dataOfficeId = data.id
         this.searchBtnClick()
       },
-      resetFormClick() {
+      resetFormClick () {
         this.$refs.searchform.resetFields()
         this.$refs.officeinput.setLabelName(null)
         this.searchFormModel.dataOfficeId = null

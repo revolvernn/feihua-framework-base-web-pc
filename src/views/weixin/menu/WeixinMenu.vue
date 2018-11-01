@@ -124,7 +124,7 @@
         this.searchFormModel.parentId = data.id
         this.searchBtnClick()
       },
-      resetFormClick() {
+      resetFormClick () {
         this.$refs['searchForm'].resetFields()
       },
       // 查询按钮点击事件
