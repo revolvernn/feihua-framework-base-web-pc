@@ -39,8 +39,7 @@
         <el-input type="textarea" :autosize="{ minRows: 2}" v-model="form.template"></el-input>
       </el-form-item>
       <el-form-item label="消息类型" prop="msgType"  v-if="typeLimit.msgType" required>
-        <el-radio v-model="form.msgType" label="JSON" value="json">JSON</el-radio>
-        <el-radio v-model="form.msgType" label="XML" value="xml">XML</el-radio>
+        <self-dict-select v-model="form.msgType" type="mini_msg_type"/>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input type="textarea" :autosize="{ minRows: 2}" v-model="form.remark"></el-input>

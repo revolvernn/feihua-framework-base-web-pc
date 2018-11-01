@@ -23,11 +23,14 @@
       <el-form-item label="WHICH" prop="which" required>
         <el-input v-model="form.which"></el-input>
       </el-form-item>
-      <el-form-item label="类型" prop="type">
+      <el-form-item label="类型" prop="type" required>
         <self-dict-select v-model="form.type" type="weixin_account_type"/>
       </el-form-item>
-      <el-form-item label="状态" prop="status" >
+      <el-form-item label="状态" prop="status" required>
         <self-dict-select v-model="form.status" type="weixin_account_status"/>
+      </el-form-item>
+      <el-form-item label="认证" prop="auth" required>
+        <self-dict-select v-model="form.auth" type="weixin_account_auth"/>
       </el-form-item>
       <el-form-item label="欢迎语类型" prop="templateType"  v-if="typeLimit.templateType" required>
         <self-dict-select v-model="form.templateType" type="weixin_msg_type"/>
@@ -36,8 +39,7 @@
         <el-input type="textarea" :autosize="{ minRows: 2}" v-model="form.template"></el-input>
       </el-form-item>
       <el-form-item label="消息类型" prop="msgType"  v-if="typeLimit.msgType" required>
-        <el-radio v-model="form.msgType" label="JSON" value="json">JSON</el-radio>
-        <el-radio v-model="form.msgType" label="XML" value="xml">XML</el-radio>
+        <self-dict-select v-model="form.msgType" type="mini_msg_type"/>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input type="textarea" :autosize="{ minRows: 2}" v-model="form.remark"></el-input>
