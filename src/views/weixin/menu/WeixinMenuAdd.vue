@@ -3,7 +3,7 @@
 
     <el-form ref="form" :model="form" :rules="formRules" style="width: 460px;" label-width="100px">
       <el-form-item label="标识" prop="which" required>
-        <self-dict-select v-model="form.which" type="weixin_publicplatform_type"></self-dict-select>
+        <weixin-account-select v-model="form.which"></weixin-account-select>
       </el-form-item>
       <el-form-item label="名称" prop="name" required>
         <el-input  v-model="form.name"></el-input>
@@ -44,8 +44,10 @@
   import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   import WeixinMenuInputSelect from '@/views/weixin/menu/WeixinMenuInputSelect.vue'
+  import WeixinAccountSelect from '@/views/weixin/account/WeixinAccountSelect'
+
   export default {
-    components: {WeixinMenuInputSelect, SelfDictSelect},
+    components: {WeixinMenuInputSelect, SelfDictSelect, WeixinAccountSelect},
     name: 'AreaAdd',
     data () {
       return {
