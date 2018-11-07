@@ -57,7 +57,7 @@
         tableLoading: false,
         // 搜索的查询条件
         searchFormModel: {
-          isRead: '',
+          isRead: null,
           pageable: true,
           pageNo: 1,
           pageSize: 10

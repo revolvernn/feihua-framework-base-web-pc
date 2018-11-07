@@ -26,7 +26,7 @@
             </span>
           </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="false">
           <div class="checkbox">
             <label>
               <input type="checkbox" name="rememberMe" v-model="form.rememberMe">记住我
@@ -58,7 +58,7 @@
           principal: null,
           password: null,
           captcha: null,
-          rememberMe: true
+          rememberMe: false
         },
         validateRules: {
           principal: [{required: true, message: '帐号不能为空'}],
