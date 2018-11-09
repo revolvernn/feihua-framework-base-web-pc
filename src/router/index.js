@@ -355,6 +355,18 @@ const router = new Router({
           name: 'ViewReadPeople',
           component: _import('message/ViewReadPeople'),
           meta: { menu: {name: '查看已读人员'}, keepAlive: true }
+        },
+        {
+          path: 'MessageSend/:id',
+          name: 'MessageSend',
+          component: _import('message/MessageSend'),
+          meta: { menu: {name: '消息发送'}, keepAlive: true }
+        },
+        {
+          path: 'MyMessage',
+          name: 'MyMessage',
+          component: _import('message/MyMessage'),
+          meta: { menu: {name: '我的消息'}, keepAlive: true }
         }
       ]
     }

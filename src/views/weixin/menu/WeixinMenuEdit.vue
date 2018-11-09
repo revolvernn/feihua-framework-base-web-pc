@@ -2,7 +2,7 @@
   <div class="wrapper">
     <el-form ref="form" :model="form" :rules="formRules" style="width: 460px;" label-width="100px" v-loading="formDataLoading">
       <el-form-item label="标识" prop="which" required>
-        <self-dict-select v-model="form.which" type="weixin_publicplatform_type"></self-dict-select>
+        <weixin-account-select v-model="form.which"></weixin-account-select>
       </el-form-item>
       <el-form-item label="名称" prop="name" required>
         <el-input  v-model="form.name"></el-input>
@@ -42,9 +42,11 @@
 <script>
   import WeixinMenuInputSelect from '@/views/weixin/menu/WeixinMenuInputSelect.vue'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
+  import WeixinAccountSelect from '@/views/weixin/account/WeixinAccountSelect'
+
   export default {
     name: 'WeixinMenuEdit',
-    components: {WeixinMenuInputSelect, SelfDictSelect},
+    components: {WeixinMenuInputSelect, SelfDictSelect, WeixinAccountSelect},
     data () {
       return {
         // 编辑的id

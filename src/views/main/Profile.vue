@@ -21,9 +21,11 @@
             </el-dropdown-menu>
           </el-dropdown>
           <br/>
-          <el-badge :value="0" :max="99" class="item message">
-            <i class="el-icon-bell"></i>
-          </el-badge>
+          <div @click="myMessageClick" >
+            <el-badge :value="messageNum" :max="99" class="item message">
+              <i class="el-icon-bell" ></i>
+            </el-badge>
+          </div>
         </el-col>
       </el-row>
     </el-col>
@@ -101,8 +103,13 @@
     },
     data () {
       return {
+        messageNum: null,
         personalDetailDialogVisible: false
       }
+    },
+    mounted () {
+      this.getMessageNum()
+      this.getMessageNumInterval()
     },
     methods: {
       handleCommand (cmmand) {
@@ -112,8 +119,10 @@
       logout () {
         let self = this
         this.$http.post('/logout').then(response => {
+          this.$store.commit('delVisitedViewsAll')
           self.$router.push('/Login')
         }).catch(() => {
+          this.$store.commit('delVisitedViewsAll')
           self.$router.push('/Login')
         })
       },
@@ -139,6 +148,24 @@
       getDictLabel (type, value) {
         let dict = getDictByValueSync(this, type, value)
         return dict ? dict.name : null
+      },
+      myMessageClick () {
+        this.$router.push('/Main/MyMessage')
+      },
+      getMessageNumInterval () {
+        let self = this
+        setInterval(() => {
+          self.getMessageNum()
+        }, 60000)
+      },
+      getMessageNum () {
+        let self = this
+        self.$http.get('/base/message/currentuser/messages', {isRead: 'N', pageable: true, pageNo: 1, pageSize: 1})
+          .then(function (response) {
+            self.messageNum = response.data.data.page.dataNum
+          }).catch(() => {
+            self.messageNum = null
+          })
       }
     },
     computed: {

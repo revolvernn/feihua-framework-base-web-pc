@@ -32,7 +32,7 @@
   import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   export default {
-    name: 'DataScope',
+    name: 'MessageTemplate',
     components: {
       SelfDictSelect,
       SelfTable,

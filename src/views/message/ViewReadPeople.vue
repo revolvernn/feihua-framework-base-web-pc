@@ -57,7 +57,7 @@
         tableLoading: false,
         // 搜索的查询条件
         searchFormModel: {
-          isRead: '',
+          isRead: null,
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -76,7 +76,7 @@
             let tableItem = this.tableData[i]
             let userItem = this.uersMap[tableItem.userId]
             realTableData.push({
-              nickname: userItem ? userItem.id : null,
+              nickname: userItem ? userItem.nickname : null,
               isRead: this.tableData[i].isRead
             })
           }

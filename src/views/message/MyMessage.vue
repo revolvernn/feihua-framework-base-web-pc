@@ -15,9 +15,11 @@
               <el-form-item label="消息紧急性">
                 <self-dict-select v-model="searchFormModel.msgLevel" type="message_level"></self-dict-select>
               </el-form-item>
+              <el-form-item label="是否已读">
+                <self-dict-select v-model="searchFormModel.isRead" type="yes_no"></self-dict-select>
+              </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
-                <el-button type="primary" @click="addTableRowClick">添加</el-button>
               </el-form-item>
             </el-form>
           </el-collapse-item>
@@ -32,10 +34,9 @@
 <script>
   import SelfPage from '@/components/SelfPage.vue'
   import SelfTable from '@/components/SelfTable.vue'
-  import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   export default {
-    name: 'Message',
+    name: 'MyMessage',
     components: {
       SelfDictSelect,
       SelfTable,
@@ -57,42 +58,31 @@
             label: '内容'
           },
           {
-            name: 'predictNum',
-            label: '预计人数'
-          },
-          {
             name: 'msgType',
             label: '消息分类',
             dict: 'message_type'
           },
           {
-            name: 'msgState',
-            label: '消息状态',
-            dict: 'message_state'
+            name: 'msgLevel',
+            label: '紧急度',
+            dict: 'message_level'
+          },
+          {
+            name: 'isRead',
+            label: '是否已读',
+            dict: 'yes_no'
           },
           {
             label: '操作',
             width: '300',
             buttons: [
               {
-                label: '查看已读人员',
-                click: this.viewReadPeopleClick
+                label: '查看',
+                click: this.viewTableRowClick
               },
               {
-                label: '发送消息',
-                click: this.sendMessageClick
-              },
-              {
-                label: '编辑',
-                click: this.editTableRowClick
-              },
-              {
-                label: '删除',
-                click: this.deleteTableRowClick
-              },
-              {
-                label: '复制消息',
-                click: this.copyTableRowClick
+                label: this.markTableRowLabel,
+                click: this.markTableRowClick
               }
             ]
           }
@@ -108,6 +98,7 @@
           title: '',
           msgLevel: '',
           msgType: '',
+          isRead: '',
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -129,7 +120,7 @@
           self.searchFormModel.pageNo = pageNo
         }
         self.tableLoading = true
-        this.$http.get('/base/messages', self.searchFormModel)
+        this.$http.get('/base/message/currentuser/messages', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
             self.tableData = content
@@ -153,74 +144,56 @@
       pageNoChange (val) {
         this.loadTableData(val)
       },
-      // tablb 表格编辑行
-      editTableRowClick (index, row) {
-        // sended 为字典值，代表已发送
-        if (row.msgState === 'sended') {
-          this.$message.error('消息已发送，不能修改')
-        } else {
-          this.$router.push('/Main/MessageEdit/' + row.id)
-        }
-      },
-      // tablb 表格删除行
-      deleteTableRowClick (index, row) {
+      // 查看消息
+      viewTableRowClick (index, row) {
         let self = this
-        this.$confirm('确定要删除吗, 是否继续?', '提示', {
-          type: 'warning'
-        }).then(() => {
-          this.$http.delete('/base/message/' + row.id)
-            .then(function (response) {
-              self.$message.success('删除成功')
+        this.$http.post('/base/message/' + row.id + '/currentuser')
+          .then(function (response) {
+            let content = response.data.data.content
+            self.$alert(content.content, content.title, {
+              confirmButtonText: '确定'
+            }
+            )
+            if (row.isRead === 'N') {
               // 重新加载数据
-              self.searchBtnClick()
-            })
-            .catch(function (error) {
-              if (error.response.status === 404) {
-                self.$message.error('删除失败，请刷新数据再试')
+              self.loadTableData()
+            }
+          })
+          .catch(function (error) {
+            if (error.response.status === 404) {
+              let response = error.response
+              let content = response.data.data.content
+              self.$alert(content.content, content.title, {
+                confirmButtonText: '确定'}
+              )
+              if (row.isRead === 'N') {
+                // 重新加载数据
+                self.loadTableData()
               }
-            })
-        })
+            }
+          })
       },
-      // 复制一条消息
-      copyTableRowClick (index, row) {
+      markTableRowLabel (index, row) {
+        if (row.isRead === 'N') {
+          return '标记为已读'
+        } else {
+          return ''
+        }
+      },
+      // 标记为已读
+      markTableRowClick (index, row) {
         let self = this
-        this.$confirm('确定要复制吗,复制后列表会添加一条相同的待发送消息, 是否继续?', '提示', {
-          type: 'warning'
-        }).then(() => {
-          this.$http.post('/base/message/' + row.id + '/copy')
-            .then(function (response) {
-              self.$message.success('复制成功')
-              // 重新加载数据
-              self.searchBtnClick()
-            })
-            .catch(function (error) {
-              if (error.response.status === 404) {
-                self.$message.error('复制失败，请刷新数据再试')
-              }
-            })
-        })
-      },
-      addTableRowClick () {
-        loadDataControl.add(this.$store, 'MessageAddLoadData=true')
-        this.$router.push('/Main/MessageAdd')
-      },
-      // 发送消息
-      sendMessageClick (index, row) {
-        if (row.msgState !== 'to_be_sended') {
-          this.$message.error('消息状态不符合发送要求，请刷新数据再试')
-        } else {
-          loadDataControl.add(this.$store, 'MessageSendLoadData=true')
-          this.$router.push('/Main/MessageSend/' + row.id)
-        }
-      },
-      // 查看已读人员
-      viewReadPeopleClick (index, row) {
-        // to_be_sended 为字典值，代表待发送
-        if (row.msgState !== 'sended') {
-          this.$message.error('消息尚未发送，请发送后再试')
-        } else {
-          this.$router.push('/Main/ViewReadPeople/' + row.id)
-        }
+        this.$http.post('/base/message/' + row.id + '/currentuser', {markOnly: true})
+          .then(function (response) {
+            self.$message.success('标记已读成功')
+            // 重新加载数据
+            self.loadTableData()
+          })
+          .catch(function (error) {
+            if (error.response.status === 404) {
+              self.$message.error('标记已读失败，请刷新数据再试')
+            }
+          })
       }
     },
     watch: {

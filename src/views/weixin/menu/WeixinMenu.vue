@@ -6,7 +6,8 @@
       title="请选择要同步的公众平台"
       :visible.sync="dialogVisible"
       width="30%">
-      <self-dict-select v-model="dialogValue" type="weixin_publicplatform_type"></self-dict-select>
+      <weixin-account-select v-model="dialogValue"></weixin-account-select>
+
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="synToWeixinClick" :loading="synToWeixinLoading">确 定</el-button>
@@ -27,7 +28,7 @@
                 <el-input  v-model="searchFormModel.name"></el-input>
               </el-form-item>
               <el-form-item label="类型" prop="which">
-                <self-dict-select v-model="searchFormModel.which" type="weixin_publicplatform_type"></self-dict-select>
+                <weixin-account-select v-model="searchFormModel.which"></weixin-account-select>
               </el-form-item>
               <el-form-item label="父级" prop="parentId">
                 <WeixinMenuInputSelect ref="weixinmenuinput"  v-model="searchFormModel.parentId">
@@ -57,9 +58,11 @@
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
   import { getDictByValueSync } from '@/utils/dictUtils.js'
   import WeixinMenuInputSelect from '@/views/weixin/menu/WeixinMenuInputSelect.vue'
+  import WeixinAccountSelect from '@/views/weixin/account/WeixinAccountSelect'
   export default {
     name: 'WeixinMenu',
     components: {
+      WeixinAccountSelect,
       SelfDictSelect,
       SelfTable,
       WeixinMenuTree,
