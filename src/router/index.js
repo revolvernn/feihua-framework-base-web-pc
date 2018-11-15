@@ -367,6 +367,57 @@ const router = new Router({
           name: 'MyMessage',
           component: _import('message/MyMessage'),
           meta: { menu: {name: '我的消息'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/Site',
+          name: 'CmsSite',
+          component: _import('cms/site/Site')
+        },
+        {
+          path: 'Cms/SiteAdd',
+          name: 'CmsSiteAdd',
+          component: _import('cms/site/SiteAdd'),
+          meta: { menu: {name: '站点添加'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/SiteEdit/:id',
+          name: 'CmsSiteEdit',
+          component: _import('cms/site/SiteEdit'),
+          meta: { menu: {name: '站点编辑'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/Channel',
+          name: 'CmsChannel',
+          component: _import('cms/channel/Channel')
+        },
+        {
+          path: 'Cms/ChannelAdd',
+          name: 'CmsChannelAdd',
+          component: _import('cms/channel/ChannelAdd'),
+          meta: { menu: {name: '栏目添加'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/ChannelEdit/:id',
+          name: 'CmsChannelEdit',
+          component: _import('cms/channel/ChannelEdit'),
+          meta: { menu: {name: '栏目编辑'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/Content',
+          name: 'CmsContent',
+          component: _import('cms/content/Content')
+        },
+        {
+          path: 'Cms/ContentAdd',
+          name: 'CmsContentAdd',
+          component: _import('cms/content/ContentAdd'),
+          meta: { menu: {name: '内容添加'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/ContentEdit/:id',
+          name: 'CmsContentEdit',
+          component: _import('cms/content/ContentEdit'),
+          meta: { menu: {name: '内容编辑'}, keepAlive: true }
         }
       ]
     }
