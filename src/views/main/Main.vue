@@ -9,7 +9,7 @@
           <el-scrollbar class="self-scroll-bar-view" wrapStyle="overflow:auto;">
           <el-menu mode="vertical" :default-openeds="defaultOpeneds" class="el-menu-vertical-demo"
                    v-loading="menuLoading" :collapse="isCollapse"  v-on:open="handleOpen" v-on:close="handleClose"
-                   element-loading-background="rgba(0, 0, 0, 0.8)"
+                   element-loading-background="rgb(48, 65, 86)"
                    :default-active="decodeURIComponent($route.fullPath)" background-color="#304156" text-color="#fff" active-text-color="#409EFF">
             <menu-items :menus="menus"></menu-items>
           </el-menu>

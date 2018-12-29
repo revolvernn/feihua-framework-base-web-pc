@@ -13,7 +13,7 @@
       </el-form-item>
 
       <el-form-item label="显示顺序">
-        <el-input-number v-model="form.sequence" :min="0" :max="1000"></el-input-number>
+        <el-input-number v-model="form.sequence" :min="0" :max="1000" controls-position="right"></el-input-number>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="updateBtnClick" :loading="addLoading">修改</el-button>

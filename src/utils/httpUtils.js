@@ -35,7 +35,7 @@ function handlerError (status, code) {
 
 Axios.interceptors.request.use((config) => {
   if (!config.dataType || config.dataType !== 'json') {
-    config.data = Qs.stringify(config.data, { allowDots: true })
+    config.data = Qs.stringify(config.data, {allowDots: config.data && !config.data.qsDefault})
   }
   return config
 }, function (error) {

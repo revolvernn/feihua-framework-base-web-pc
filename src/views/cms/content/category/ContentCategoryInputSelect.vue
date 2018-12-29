@@ -1,32 +1,32 @@
 <template>
   <div>
     <el-popover
-      ref="weixinMenuSelect"
+      ref="popoverSelect"
       placement="right"
       v-on:show="popoverShow"
       trigger="click">
       <el-scrollbar wrapStyle="max-height:500px;">
-        <WeixinMenuTree ref="weimenuTree" v-on:nodeClick="treeNodeClick" :loadData="false" :which="which" :watch-which="false"></WeixinMenuTree>
+        <ContentCategoryTree ref="refsTree" v-on:nodeClick="treeNodeClick" :site-id="siteId" :loadData="false" :watch-site-id="false"></ContentCategoryTree>
       </el-scrollbar>
     </el-popover>
     <el-input style="display: none;" value="" v-model="model">
     </el-input>
     <el-input   value="" v-model="name" v-on:focus="handleFocus($event)" v-on:handleBlur="handleBlur($event)" v-on:change="emitChange" v-on:input="emitInput" :readonly="true" clearable>
-      <el-button slot="append" icon="el-icon-search" v-popover:weixinMenuSelect></el-button>
+      <el-button slot="append" icon="el-icon-search" v-popover:popoverSelect></el-button>
       <i slot="suffix" class="el-input__icon el-icon-circle-close el-input__clear" @click="setLabelName(null)"></i>
     </el-input>
   </div>
 </template>
 
 <script>
-  import WeixinMenuTree from '@/views/weixin/menu/WeixinMenuTree.vue'
+  import ContentCategoryTree from '@/views/cms/content/category/ContentCategoryTree.vue'
   export default {
-    components: {WeixinMenuTree},
-    name: 'WeixinMenuInputSelect',
+    components: {ContentCategoryTree},
+    name: 'ContentCategoryInputSelect',
     props: {
       value: '',
       labelName: '',
-      which: null
+      siteId: ''
     },
     data () {
       return {
@@ -67,7 +67,7 @@
           _id = this.model
         }
         if (_id) {
-          this.$http.get('/weixinmenu/menu/' + _id).then(response => {
+          this.$http.get('/cms/content/category/' + _id).then(response => {
             let content = response.data.data.content
             this.name = content.name
           }).catch(() => {
@@ -79,7 +79,7 @@
       },
       popoverShow () {
         if (this.firstShowPopover === false) {
-          this.$refs.weimenuTree.loadTreeData()
+          this.$refs.refsTree.loadTreeData()
           this.firstShowPopover = true
         }
       }

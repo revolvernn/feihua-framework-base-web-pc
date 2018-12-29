@@ -174,7 +174,7 @@
       ]),
       headPic () {
         if (this.loginUser && this.loginUser.photo) {
-          return this.$config.file.downloadUrl + this.loginUser.photo
+          return this.$config.file.getDownloadUrl(this.loginUser.photo)
         } else {
           return require('@/assets/index/headPic.jpg')
         }

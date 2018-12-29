@@ -26,11 +26,11 @@
         <el-input  v-model="form.pagepath"></el-input>
       </el-form-item>
       <el-form-item label="父级" prop="parentId">
-        <WeixinMenuInputSelect ref="weixinmenuinput"  v-model="form.parentId">
+        <WeixinMenuInputSelect ref="weixinmenuinput" :which="form.which"  v-model="form.parentId">
         </WeixinMenuInputSelect>
       </el-form-item>
       <el-form-item label="显示顺序" prop="sequence">
-        <el-input-number v-model="form.sequence" :min="0" :max="1000"></el-input-number>
+        <el-input-number v-model="form.sequence" :min="0" :max="1000" controls-position="right"></el-input-number>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="updateBtnClick" :loading="addLoading">修改</el-button>
@@ -48,6 +48,41 @@
     name: 'WeixinMenuEdit',
     components: {WeixinMenuInputSelect, SelfDictSelect, WeixinAccountSelect},
     data () {
+      let validateKey = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.key) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
+      let validateUrl = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.url) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
+      let validateMediaId = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.mediaId) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
+      let validateAppid = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.appid) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
+      let validatePagepath = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.pagepath) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
       return {
         // 编辑的id
         id: null,
@@ -80,13 +115,27 @@
           ],
           name: [
             {required: true, message: '必填', trigger: 'blur'}
+          ],
+          key: [
+            {validator: validateKey, trigger: 'blur'}
+          ],
+          url: [
+            {validator: validateUrl, trigger: 'blur'}
+          ],
+          mediaId: [
+            {validator: validateMediaId, trigger: 'blur'}
+          ],
+          appid: [
+            {validator: validateAppid, trigger: 'blur'}
+          ],
+          pagepath: [
+            {validator: validatePagepath, trigger: 'blur'}
           ]
         }
       }
     },
     mounted () {
       this.id = this.$route.params.id
-      this.form.type = '33'
       this.loadEditData(this.id)
     },
     methods: {
@@ -100,7 +149,7 @@
             self.form.name = content.name
             self.form.type = content.type
             self.form.which = content.which
-            self.form.sequence = content.sequence
+            self.form.sequence = content.sequence || 1
             self.form.parentId = content.parentId
             self.form.key = content.key
             self.form.url = content.url
@@ -198,6 +247,10 @@
         if (vm.id !== vm.$route.params.id) {
           vm.id = vm.$route.params.id
           vm.loadEditData(vm.id)
+        }
+        let which = vm.$route.query.which
+        if (which && vm.form.which !== which) {
+          vm.form.which = which
         }
       })
     }

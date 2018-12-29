@@ -1,33 +1,42 @@
 <template>
-  <el-select value="" :disabled="disabled" v-model="model" v-on:focus="handleFocus($event)" v-on:handleBlur="handleBlur($event)" v-on:change="emitChange" v-on:input="emitInput">
-    <el-option label="不限" value="" v-if="showNone"></el-option>
-    <el-option  v-for="item in options" :label="item.name" :disabled="item.status !== 'Y'" :value="item.which" :key="item.id" ></el-option>
-  </el-select>
+  <el-checkbox-group v-if="options && options.length > 0" value="" :disabled="disabled" v-model="model" v-on:focus="handleFocus($event)" v-on:handleBlur="handleBlur($event)" v-on:change="emitChange" v-on:input="emitInput">
+    <el-checkbox  v-for="item in options" :label="item.id" :key="item.id" >{{item.name}}</el-checkbox>
+  </el-checkbox-group>
+  <div v-else>暂无内容分类</div>
 </template>
 
 <script>
   export default {
-    name: 'WeixinAccountSelect',
+    name: 'ContentCategoryCheckboxGroup',
     props: {
       value: '',
-      showNone: {
+      showCheckAll: {
         default: true
       },
-      // 标识是公众号还是小程序，默认公众号，false=公众号，true=小程序
-      miniprogram: {
-        default: false
+      siteId: {
+        default: null
       },
+      parentId: null,
       disabled: {
         default: false
+      },
+      // 最少选几个
+      min: {
+        default: null
+      },
+      // 最多选几个
+      max: {
+        default: null
       }
     },
     data () {
       return {
-        model: '',
+        model: [],
         options: [],
         // 搜索的查询条件
         searchFormModel: {
-          type: '',
+          siteId: null,
+          parentId: null,
           pageable: false,
           pageNo: 1,
           pageSize: 10
@@ -53,24 +62,27 @@
       // 加载数据
       loadData () {
         let self = this
-        let type = 'weixin_publicplatform'
-        if (self.miniprogram === true) {
-          type = 'weixin_miniprogram'
+
+        if (!this.searchFormModel.siteId) {
+          return
         }
-        self.searchFormModel.type = type
-        self.$http.get('/weixinaccount/accounts?t=' + new Date().getTime(), self.searchFormModel)
+        self.$http.get('/cms/content/categorys', self.searchFormModel)
           .then(function (response) {
             self.options = response.data.data.content
-          }).catch(error => {
-            if (error.response.status === 404) {
-              self.$message.error('微信公众帐号加载失败:' + self.type)
-            }
           })
       }
     },
     watch: {
       value (val) {
         this.model = val
+      },
+      siteId (val) {
+        this.searchFormModel.siteId = val
+        this.loadData()
+      },
+      parentId (val) {
+        this.searchFormModel.parentId = val
+        this.loadData()
       }
     }
   }

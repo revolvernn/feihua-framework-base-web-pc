@@ -12,26 +12,27 @@
       <el-form-item label="名称" prop="name" required>
         <el-input  v-model="form.name"></el-input>
       </el-form-item>
+      <el-form-item label="类型" prop="type">
+        <self-dict-select v-model="form.type" type="funResource_type"></self-dict-select>
+      </el-form-item>
       <el-form-item label="图标" prop="icon">
         <el-input  v-model="form.icon">
           <i slot="prepend" :class="form.icon"></i>
           <el-button slot="append" icon="el-icon-search"  v-popover:funResourceIconSelect></el-button>
         </el-input>
       </el-form-item>
-      <el-form-item label="类型" prop="type">
-        <self-dict-select v-model="form.type" type="funResource_type"></self-dict-select>
-      </el-form-item>
+
       <el-form-item label="是否显示" prop="isShow" required>
         <self-dict-select v-model="form.isShow" type="yes_no"></self-dict-select>
       </el-form-item>
-      <el-form-item label="url">
+      <el-form-item label="url" prop="url" v-if="form.type == 'link_page' || form.type == 'link'">
         <el-input  v-model="form.url"></el-input>
       </el-form-item>
       <el-form-item label="权限标识">
         <el-input  v-model="form.permissions"></el-input>
       </el-form-item>
       <el-form-item label="显示顺序" prop="sequence">
-        <el-input-number v-model="form.sequence" :min="0" :max="1000"></el-input-number>
+        <el-input-number v-model="form.sequence" :min="0" :max="1000" controls-position="right"></el-input-number>
       </el-form-item>
       <el-form-item label="父级" prop="parentId">
         <FunResourceInputSelect ref="funResourceParentinput"  v-model="form.parentId">
@@ -60,6 +61,13 @@
       FunResourceInputSelect},
     name: 'FunResourceAdd',
     data () {
+      let validateUrl = (rule, value, callback) => {
+        if ((value === '' || value == null) && (this.form.type === 'link_page' || this.form.type === 'link')) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
       return {
         form: {
           icon: null,
@@ -87,6 +95,9 @@
           ],
           sequence: [
             {required: true, message: '必填', trigger: 'blur'}
+          ],
+          url: [
+            {validator: validateUrl, trigger: 'blur'}
           ]
         }
       }
@@ -127,6 +138,13 @@
       }
     },
     watch: {
+      'form.type' (val) {
+        if (val === 'menu' || val === 'link_page' || val === 'link') {
+          this.form.isShow = 'Y'
+        } else {
+          this.form.isShow = 'N'
+        }
+      }
     },
     beforeRouteEnter  (to, from, next) {
       next(vm => {

@@ -140,7 +140,7 @@
       uploadSuccess (res, file, fileList) {
         let content = res.data.content
         let self = this
-        self.insertContent(`<img src="${self.$config.file.downloadUrl + content.path}" >`)
+        self.insertContent(`<img src="${self.$config.file.getDownloadUrl(content.path)}" >`)
       }
     },
     watch: {

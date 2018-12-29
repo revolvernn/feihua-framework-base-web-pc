@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="title"
+    :title="options.title"
     :visible.sync="dialogVisible"
     width="30%">
 
@@ -9,8 +9,8 @@
       class="avatar-uploader"
       :action="$config.file.uploadUrl"
       :data="dataParam"
-      :accept="accept"
-      :limit="limit"
+      :accept="options.accept"
+      :limit="options.limit"
       name="file"
       :show-file-list="true"
       list-type="picture-card"
@@ -25,7 +25,7 @@
 
     <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="submit">确 定</el-button>
+    <el-button type="primary" @click="submit" :loading="loading">确 定</el-button>
   </span>
   </el-dialog>
 </template>
@@ -34,7 +34,7 @@
   export default {
     name: 'FileUpload',
     props: {
-      // 上传时附带的额外参数,可以传path和fileType两个参数，其中fileType可选值为file_type_export或file_type_upload
+      // 上传时附带的额外参数,可以传path和fileType两个参数，其中fileType参看字典项
       data: null,
       // 接受上传的文件类型
       accept: null,
@@ -52,15 +52,27 @@
     data () {
       return {
         dialogVisible: false,
-        disabled: false
+        disabled: false,
+        loading: false,
+        fileSelectSize: 0,
+        options: {
+          data: null,
+          accept: null,
+          limit: 1,
+          onSuccess: null,
+          title: '文件上传'
+        }
       }
     },
     mounted () {
+      this.propToOptions()
     },
     computed: {
       dataParam () {
-        if (!this.data) {
-          return {path: 'upload', fileType: 'file_type_upload'}
+        if (!this.options.data) {
+          return {path: 'upload'}
+        } else {
+          return this.options.data
         }
       }
     },
@@ -68,33 +80,103 @@
       show () {
         this.dialogVisible = true
       },
+      showWithOptions (options) {
+        if (options) {
+          if (options.data) {
+            this.options.data = options.data
+          }
+          if (options.accept) {
+            this.options.accept = options.accept
+          }
+          if (options.limit) {
+            this.options.limit = options.limit
+          }
+          if (options.onSuccess) {
+            this.options.onSuccess = options.onSuccess
+          }
+          if (options.title) {
+            this.options.title = options.title
+          }
+        }
+        this.show()
+      },
+      propToOptions () {
+        if (this.data) {
+          this.options.data = this.data
+        }
+        if (this.accept) {
+          this.options.accept = this.accept
+        }
+        if (this.limit) {
+          this.options.limit = this.limit
+        }
+        if (this.onSuccess) {
+          this.options.onSuccess = this.onSuccess
+        }
+        if (this.title) {
+          this.options.title = this.title
+        }
+      },
       hide () {
         this.dialogVisible = false
       },
       submit () {
+        this.loading = true
+        if (this.fileSelectSize === 0) {
+          this.$message.error('请选择上传文件')
+          this.loading = false
+          return
+        }
         this.$refs.upload.submit()
       },
       handleSuccess (res, file, fileList) {
-        if (this.onSuccess && typeof this.onSuccess === 'function') {
+        if (this.options.onSuccess && typeof this.options.onSuccess === 'function') {
+          this.options.onSuccess(res, file, fileList)
+        } else if (this.onSuccess && typeof this.onSuccess === 'function') {
           this.onSuccess(res, file, fileList)
         }
         this.clearFiles()
+        this.loading = false
       },
       handleError (error, file, fileList) {
         if (error) {
           this.$message.error('文件上传失败，请稍候再试')
           this.clearFiles()
         }
+        this.loading = false
       },
       beforeUpload (file) {
+        if (this.fileSelectSize === 0) {
+          this.$message.error('请选择上传文件')
+          this.loading = false
+          return false
+        }
       },
       handleChange (file, fileList) {
+        this.fileSelectSize = fileList.length
       },
       onExceed () {
         this.$message.error('文件超出限制个数')
       },
       clearFiles () {
         this.$refs.upload.clearFiles()
+      }
+    },
+    watch: {
+      data (d) {
+        this.options.data = d
+      },
+      accept (d) {
+        this.options.accept = d
+      },
+      limit (d) {
+        this.options.limit = d
+      },
+      onSuccess (d) {
+        this.options.onSuccess = d
+      },
+      title (d) {
+        this.options.title = d
       }
     }
   }

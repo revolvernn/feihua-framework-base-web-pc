@@ -418,6 +418,23 @@ const router = new Router({
           name: 'CmsContentEdit',
           component: _import('cms/content/ContentEdit'),
           meta: { menu: {name: '内容编辑'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/ContentCategory',
+          name: 'CmsContentCategory',
+          component: _import('cms/content/category/ContentCategory')
+        },
+        {
+          path: 'Cms/ContentCategoryAdd',
+          name: 'CmsContentCategoryAdd',
+          component: _import('cms/content/category/ContentCategoryAdd'),
+          meta: { menu: {name: '内容分类添加'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/ContentCategoryEdit/:id',
+          name: 'CmsContentCategoryEdit',
+          component: _import('cms/content/category/ContentCategoryEdit'),
+          meta: { menu: {name: '内容分类编辑'}, keepAlive: true }
         }
       ]
     }

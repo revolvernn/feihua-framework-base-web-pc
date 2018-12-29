@@ -4,37 +4,41 @@
     :visible.sync="dialogVisible"
     width="30%">
 
-    <a :href="downloadUrl" target="_blank">请点击这里下载</a>
+    <SiteSelect ref="siteinput"  v-model="siteId">
+    </SiteSelect>
     <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="submit">确 定</el-button>
   </span>
   </el-dialog>
 </template>
 
 <script>
+  import SiteSelect from '@/views/cms/site/SiteSelect.vue'
+
   export default {
-    name: 'FileDownloadDialog',
+    name: 'SiteSelectDialog',
+    components: {
+      SiteSelect
+    },
     props: {
+      // 选择成功回调
+      onSuccess: null,
       // 弹窗标题
       title: {
-        default: '文件下载'
+        default: '请选择站点'
       }
     },
     data () {
       return {
         dialogVisible: false,
-        path: ''
-      }
-    },
-    computed: {
-      downloadUrl () {
-        if (this.path) {
-          return this.$config.file.getDownloadUrl(this.path)
-        }
-        return '#'
+        siteId: null
       }
     },
     mounted () {
+    },
+    computed: {
+
     },
     methods: {
       show () {
@@ -43,8 +47,15 @@
       hide () {
         this.dialogVisible = false
       },
-      setPath (path) {
-        this.path = path
+      submit () {
+        if (this.siteId === '' || this.siteId == null) {
+          this.$message.error('请选择站点')
+          return
+        }
+        if (this.onSuccess && typeof this.onSuccess === 'function') {
+          this.onSuccess(this.siteId)
+        }
+        this.hide()
       }
     }
   }
@@ -52,4 +63,6 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 </style>
+
