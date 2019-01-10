@@ -35,7 +35,7 @@
        </el-table-column>
        <el-table-column v-else-if="item.dict" :prop="item.name" :label="item.label" :key="item.name" :formatter="item.formatter" :width="item.width">
          <template slot-scope="scope">
-         {{getDictLabel(item.dict, scope.row[item.name])}}
+         {{getDictLabel(item.dict, scope.row[item.name],item.dictValue)}}
          </template>
        </el-table-column>
        <el-table-column v-else-if="item.html" :prop="item.name" :label="item.label" :key="item.name" :formatter="item.formatter" :width="item.width">
@@ -101,9 +101,13 @@
       pageNoChange (val) {
         this.$emit('pageNoChange', val)
       },
-      getDictLabel (type, value) {
+      getDictLabel (type, value, dictValue) {
         let dict = getDictByValueSync(this, type, value)
-        return dict ? dict.name : null
+        let str = dict ? dict.name : null
+        if (str && dictValue) {
+          str = str + '(' + value + ')'
+        }
+        return str
       },
       btnDisabled (disabled, index, row) {
         if (typeof disabled === 'function') {

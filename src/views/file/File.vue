@@ -9,7 +9,7 @@
               <el-form-item label="名称">
                 <el-input  v-model="searchFormModel.name"></el-input>
               </el-form-item>
-              <el-form-item label="分类">
+              <el-form-item label="类型">
                 <self-dict-select v-model="searchFormModel.type" type="file_type"></self-dict-select>
               </el-form-item>
               <el-form-item>

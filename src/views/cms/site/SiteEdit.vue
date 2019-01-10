@@ -4,11 +4,30 @@
       <el-form-item label="名称" prop="name" required>
         <el-input  v-model="form.name"></el-input>
       </el-form-item>
-      <el-form-item label="域名" prop="domain" required>
-        <el-input  v-model="form.domain"></el-input>
+      <el-form-item label="域名" prop="domain">
+        <el-input  v-model="form.domain" placeholder="http://localhost:8080"></el-input>
       </el-form-item>
-      <el-form-item label="路径" prop="path" required>
-        <el-input  v-model="form.path"></el-input>
+      <el-form-item label="访问路径" prop="path">
+        <el-input  v-model="form.path" placeholder="站点访问径 如：/demo"></el-input>
+      </el-form-item>
+      <el-form-item label="模板路径" prop="templatePath">
+<!--
+        <el-input  v-model="form.templatePath" placeholder="不填写使用默认模板 如：/demo"></el-input>
+-->
+        <template-select v-model="form.templatePath" type="site" :folder="true" placeholder="不填写使用默认模板 如：/demo"></template-select>
+      </el-form-item>
+      <el-form-item label="模板" prop="template">
+        <!--<el-input  v-model="form.template" placeholder="请填写模板路径下的文件名 如：index.html"></el-input>-->
+        <template-select v-model="form.template" type="site" :template-path="form.templatePath" :folder="false" placeholder="请填写模板路径下的文件名 如：index.html"></template-select>
+      </el-form-item>
+      <el-form-item label="静态页路径" prop="staticPath">
+        <el-input  v-model="form.staticPath" placeholder="静态页存放目录,如：/demohtml"></el-input>
+      </el-form-item>
+      <el-form-item label="部署路径" prop="deployPath">
+        <el-input  v-model="form.deployPath" placeholder="如果是根路径请留空 如：/demo"></el-input>
+      </el-form-item>
+      <el-form-item label="是否主站" prop="isMain">
+        <SelfDictSelect  v-model="form.isMain" type="yes_no"></SelfDictSelect>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="updateBtnClick" :loading="addLoading">修改</el-button>
@@ -19,12 +38,28 @@
 
 <script>
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
+  import TemplateSelect from '@/views/cms/TemplateSelect'
   export default {
     name: 'SiteEdit',
     components: {
+      TemplateSelect,
       SelfDictSelect
     },
     data () {
+      let validateDomain = (rule, value, callback) => {
+        if ((value === '' || value == null) && (this.form.path === '' || this.form.path == null)) {
+          callback(new Error('访问路径和域名至少填写一项'))
+        } else {
+          callback()
+        }
+      }
+      let validatePath = (rule, value, callback) => {
+        if ((value === '' || value == null) && (this.form.domain === '' || this.form.domain == null)) {
+          callback(new Error('访问路径和域名至少填写一项'))
+        } else {
+          callback()
+        }
+      }
       return {
         // 编辑的id
         id: null,
@@ -32,6 +67,11 @@
           name: null,
           domain: null,
           path: null,
+          templatePath: null,
+          template: null,
+          staticPath: null,
+          deployPath: null,
+          isMain: null,
           updateTime: null
         },
         formDataLoading: false,
@@ -41,9 +81,15 @@
             {required: true, message: '必填', trigger: 'blur'}
           ],
           domain: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {validator: validateDomain, trigger: 'blur'}
           ],
           path: [
+            {validator: validatePath, trigger: 'blur'}
+          ],
+          staticPath: [
+            {required: true, message: '必填', trigger: 'blur'}
+          ],
+          isMain: [
             {required: true, message: '必填', trigger: 'blur'}
           ]
         }
@@ -64,6 +110,11 @@
             self.form.name = content.name
             self.form.domain = content.domain
             self.form.path = content.path
+            self.form.templatePath = content.templatePath
+            self.form.template = content.template
+            self.form.staticPath = content.staticPath
+            self.form.deployPath = content.deployPath
+            self.form.isMain = content.isMain
             self.form.updateTime = content.updateAt
             self.formDataLoading = false
           })

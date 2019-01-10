@@ -1,23 +1,15 @@
 <template>
 
   <div class="wrapper">
-
-    <el-dialog
-      title="请选择要同步的公众平台"
-      :visible.sync="dialogVisible"
-      width="30%">
-      <weixin-account-select v-model="dialogValue"></weixin-account-select>
-
-      <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="synToWeixinClick" :loading="synToWeixinLoading">确 定</el-button>
-  </span>
-    </el-dialog>
-
     <el-container>
+      <el-header>
+        <weixin-account-select style="width:100%" v-model="searchFormModel.which"></weixin-account-select>
+      </el-header>
+
+        <el-container>
       <el-aside width="200px">
         <el-scrollbar style="height: 100%;" wrapStyle="height:100%;overflow:auto;" >
-          <WeixinMenuTree ref="lefttree" v-on:nodeClick="treeNodeClick"></WeixinMenuTree>
+          <WeixinMenuTree ref="lefttree" v-on:nodeClick="treeNodeClick" :which="searchFormModel.which"></WeixinMenuTree>
          </el-scrollbar>
       </el-aside>
       <el-main>
@@ -27,17 +19,16 @@
               <el-form-item label="名称" prop="name">
                 <el-input  v-model="searchFormModel.name"></el-input>
               </el-form-item>
-              <el-form-item label="类型" prop="which">
-                <weixin-account-select v-model="searchFormModel.which"></weixin-account-select>
-              </el-form-item>
+
               <el-form-item label="父级" prop="parentId">
-                <WeixinMenuInputSelect ref="weixinmenuinput"  v-model="searchFormModel.parentId">
+                <WeixinMenuInputSelect ref="weixinmenuinput"  v-model="searchFormModel.parentId" :which="searchFormModel.which">
                 </WeixinMenuInputSelect>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
                 <el-button type="primary" @click="addTableRowClick">添加</el-button>
-                <el-button type="primary" @click="dialogVisible = true">同步到微信</el-button>
+                <el-button type="primary" @click="previewClick">预览</el-button>
+                <el-button type="primary" @click="synToWeixinClick" :loading="synToWeixinLoading">同步到微信</el-button>
                 <el-button @click="resetFormClick">重置</el-button>
               </el-form-item>
             </el-form>
@@ -45,8 +36,11 @@
         </el-collapse>
         <self-table :columns="columns" :tableData="tableData" :page="page" :table-loading="tableLoading" v-on:pageSizeChange="pageSizeChange" v-on:pageNoChange="pageNoChange"></self-table>
       </el-main>
+        </el-container>
     </el-container>
+    <WeixinAccountSelectDialog ref="accountSelectDialog" :on-success="accountSelectSuccess"/>
 
+    <weixin-menu-preview-dialog :which="searchFormModel.which" ref="previewDialog"/>
   </div>
 </template>
 
@@ -59,15 +53,19 @@
   import { getDictByValueSync } from '@/utils/dictUtils.js'
   import WeixinMenuInputSelect from '@/views/weixin/menu/WeixinMenuInputSelect.vue'
   import WeixinAccountSelect from '@/views/weixin/account/WeixinAccountSelect'
+  import WeixinAccountSelectDialog from '@/views/weixin/account/WeixinAccountSelectDialog.vue'
+  import WeixinMenuPreviewDialog from '@/views/weixin/menu/WeixinMenuPreviewDialog'
   export default {
     name: 'WeixinMenu',
     components: {
+      WeixinMenuPreviewDialog,
       WeixinAccountSelect,
       SelfDictSelect,
       SelfTable,
       WeixinMenuTree,
       SelfPage,
-      WeixinMenuInputSelect
+      WeixinMenuInputSelect,
+      WeixinAccountSelectDialog
     },
     data () {
       return {
@@ -80,6 +78,30 @@
             name: 'type',
             label: '类型',
             formatter: this.typeFormatter
+          },
+          {
+            name: 'sequence',
+            label: '排序'
+          },
+          {
+            name: 'key',
+            label: '事件key'
+          },
+          {
+            name: 'url',
+            label: '链接url'
+          },
+          {
+            name: 'mediaId',
+            label: '媒体mediaId'
+          },
+          {
+            name: 'appid',
+            label: '小程序appid'
+          },
+          {
+            name: 'pagepath',
+            label: '小程序入口pagepath'
           },
           {
             label: '操作',
@@ -110,11 +132,12 @@
           parentId: '',
           pageable: true,
           pageNo: 1,
-          pageSize: 10
+          pageSize: 10,
+          orderable: true,
+          orderby: 'sequence-asc'
         },
         dialogVisible: false,
-        synToWeixinLoading: false,
-        dialogValue: null
+        synToWeixinLoading: false
       }
     },
     mounted () {
@@ -137,6 +160,11 @@
       // 加载表格数据
       loadTableData (pageNo, pageNoChange) {
         let self = this
+        if (!this.searchFormModel.which) {
+          this.$refs.accountSelectDialog.show()
+          return
+        }
+
         if (pageNo > 0) {
           if (pageNoChange) {
             self.searchFormModel.pageNo = pageNo
@@ -175,7 +203,7 @@
       },
       // tablb 表格编辑行
       editTableRowClick (index, row) {
-        this.$router.push('/Main/Weixin/Menu/WeixinMenuEdit/' + row.id)
+        this.$router.push('/Main/Weixin/Menu/WeixinMenuEdit/' + row.id + '?which=' + this.searchFormModel.which)
       },
       // tablb 表格删除行
       deleteTableRowClick (index, row) {
@@ -198,19 +226,24 @@
       },
       addTableRowClick () {
         loadDataControl.add(this.$store, 'WeixinMenuAddLoadData=true')
-        this.$router.push('/Main/Weixin/Menu/WeixinMenuAdd')
+        this.$router.push('/Main/Weixin/Menu/WeixinMenuAdd?which=' + this.searchFormModel.which)
+      },
+      previewClick () {
+        this.$refs.previewDialog.show()
       },
       synToWeixinClick () {
         let self = this
-        if (!self.dialogValue) {
-          self.dialogValue = self.searchFormModel.which
-        }
-        if (!self.dialogValue) {
+        if (!self.searchFormModel.which) {
           self.$message.error('请先选择同步到哪一个公众平台')
           return
         }
         self.synToWeixinLoading = true
-        self.$http.post('/weixinmenu/synToWeixinServer', {which: self.dialogValue})
+        let param = {
+          which: self.searchFormModel.which,
+          orderby: self.searchFormModel.orderby,
+          orderable: self.searchFormModel.orderable
+        }
+        self.$http.post('/weixinmenu/synToWeixinServer', param)
           .then(res => {
             self.$message.success('同步成功')
             self.synToWeixinLoading = false
@@ -227,9 +260,15 @@
       typeFormatter (row) {
         let dict = getDictByValueSync(this, 'weixin_menu_type', row.type)
         return dict ? dict.name : null
+      },
+      accountSelectSuccess (which) {
+        this.searchFormModel.which = which
       }
     },
     watch: {
+      'searchFormModel.which' () {
+        this.loadTableData(1)
+      }
     }
   }
 </script>

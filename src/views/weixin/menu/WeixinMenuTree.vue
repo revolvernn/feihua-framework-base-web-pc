@@ -19,9 +19,15 @@
 <script>
   import { arrayToTree } from '@/utils/treeUtils.js'
   export default {
-    name: 'AreaTree',
+    name: 'WeixinMenuTree',
     props: {
       loadData: {
+        default: true
+      },
+      which: {
+        default: null
+      },
+      watchWhich: {
         default: true
       }
     },
@@ -37,6 +43,11 @@
         treeDefaultProps: {
           children: 'children',
           label: 'name'
+        },
+        param: {
+          which: null,
+          orderable: true,
+          orderby: 'sequence-asc'
         }
       }
     },
@@ -57,13 +68,19 @@
       },
       // 左边刷新按钮，重新加载树数据
       treeRefreshBtnClick () {
+        console.log(this.which)
         this.loadTreeData()
       },
       // 加载树数据
       loadTreeData () {
         let self = this
+        if (!this.which) {
+          self.treeData = []
+          return
+        }
         self.treeLoading = true
-        this.$http.get('/weixinmenu/menus')
+
+        this.$http.get('/weixinmenu/menus', this.param)
           .then(function (response) {
             let content = response.data.data.content
             self.treeData = content
@@ -94,6 +111,12 @@
           }
         }
         return treeData
+      },
+      which (val) {
+        if (this.watchWhich) {
+          this.loadTreeData()
+        }
+        this.param.which = val
       }
     }
   }

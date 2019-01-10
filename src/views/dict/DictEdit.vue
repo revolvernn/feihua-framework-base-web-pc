@@ -14,7 +14,7 @@
         <el-input  v-model="form.discription"></el-input>
       </el-form-item>
       <el-form-item label="显示顺序">
-        <el-input-number v-model="form.sequence" :min="0" :max="1000"></el-input-number>
+        <el-input-number v-model="form.sequence" :min="0" :max="1000" controls-position="right"></el-input-number>
       </el-form-item>
       <el-form-item label="是否系统" prop="isSystem" required>
         <self-dict-select v-model="form.isSystem" type="yes_no"></self-dict-select>

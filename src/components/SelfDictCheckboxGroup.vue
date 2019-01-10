@@ -10,6 +10,10 @@
     name: 'SelfDictCheckboxGroup',
     props: {
       value: '',
+      // string array 两种可选
+      valueType: {
+        default: 'array'
+      },
       showCheckAll: {
         default: true
       },
@@ -19,9 +23,11 @@
       disabled: {
         default: false
       },
+      // 最少选几个
       min: {
         default: null
       },
+      // 最多选几个
       max: {
         default: null
       }
@@ -33,6 +39,7 @@
       }
     },
     mounted () {
+      this.adapter()
       this.loadDict()
     },
     methods: {
@@ -43,10 +50,26 @@
         this.$emit('blur', event)
       },
       emitChange (val) {
-        this.$emit('change', val)
+        if (this.valueType === 'string') {
+          if (val && val.length > 0) {
+            this.$emit('change', val.join(','))
+          } else {
+            this.$emit('change', null)
+          }
+        } else {
+          this.$emit('change', val)
+        }
       },
       emitInput (val) {
-        this.$emit('input', val)
+        if (this.valueType === 'string') {
+          if (val && val.length > 0) {
+            this.$emit('input', val.join(','))
+          } else {
+            this.$emit('input', null)
+          }
+        } else {
+          this.$emit('input', val)
+        }
       },
       // 加载字典
       loadDict () {
@@ -61,11 +84,26 @@
             self.$message.error('字典下拉选项加载失败:' + self.type)
           }
         })
+      },
+      adapter () {
+        if (this.valueType === 'string') {
+          if (this.value) {
+            let _array = this.value.split(',')
+            this.model = []
+            for (let i = 0; i < _array.length; i++) {
+              this.model.push(_array[i])
+            }
+          } else {
+            this.model = []
+          }
+        } else {
+          this.model = this.value
+        }
       }
     },
     watch: {
       value (val) {
-        this.model = val
+        this.adapter()
       }
     }
   }

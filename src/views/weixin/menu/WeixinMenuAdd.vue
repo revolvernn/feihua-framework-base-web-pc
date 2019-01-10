@@ -2,7 +2,7 @@
   <div class="wrapper">
 
     <el-form ref="form" :model="form" :rules="formRules" style="width: 460px;" label-width="100px">
-      <el-form-item label="标识" prop="which" required>
+      <el-form-item label="公众平台" prop="which" required>
         <weixin-account-select v-model="form.which"></weixin-account-select>
       </el-form-item>
       <el-form-item label="名称" prop="name" required>
@@ -27,11 +27,11 @@
         <el-input  v-model="form.pagepath"></el-input>
       </el-form-item>
       <el-form-item label="父级" prop="parentId">
-        <WeixinMenuInputSelect ref="weixinmenuinput"  v-model="form.parentId">
+        <WeixinMenuInputSelect ref="weixinmenuinput" :which="form.which"  v-model="form.parentId">
         </WeixinMenuInputSelect>
       </el-form-item>
       <el-form-item label="显示顺序" prop="sequence">
-        <el-input-number v-model="form.sequence" :min="0" :max="1000"></el-input-number>
+        <el-input-number v-model="form.sequence" :min="0" :max="1000" controls-position="right"></el-input-number>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="addBtnClick" :loading="addLoading">添加</el-button>
@@ -48,8 +48,43 @@
 
   export default {
     components: {WeixinMenuInputSelect, SelfDictSelect, WeixinAccountSelect},
-    name: 'AreaAdd',
+    name: 'WeixinMenuAdd',
     data () {
+      let validateKey = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.key) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
+      let validateUrl = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.url) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
+      let validateMediaId = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.mediaId) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
+      let validateAppid = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.appid) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
+      let validatePagepath = (rule, value, callback) => {
+        if ((value === '' || value == null) && this.typeLimit.pagepath) {
+          callback(new Error('必填'))
+        } else {
+          callback()
+        }
+      }
       return {
         form: {
           name: null,
@@ -78,6 +113,21 @@
           ],
           name: [
             {required: true, message: '必填', trigger: 'blur'}
+          ],
+          key: [
+            {validator: validateKey, trigger: 'blur'}
+          ],
+          url: [
+            {validator: validateUrl, trigger: 'blur'}
+          ],
+          mediaId: [
+            {validator: validateMediaId, trigger: 'blur'}
+          ],
+          appid: [
+            {validator: validateAppid, trigger: 'blur'}
+          ],
+          pagepath: [
+            {validator: validatePagepath, trigger: 'blur'}
           ]
         }
       }
@@ -165,6 +215,10 @@
           // 重置表单
           vm.resetForm()
           loadDataControl.remove(vm.$store, dataControl)
+        }
+        let which = vm.$route.query.which
+        if (which && vm.form.which !== which) {
+          vm.form.which = which
         }
       })
     }

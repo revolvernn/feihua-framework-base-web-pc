@@ -48,7 +48,7 @@
       // 加载数据
       loadData () {
         let self = this
-        self.$http.get('/cms/sites', self.searchFormModel)
+        self.$http.get('/cms/sites?t=' + new Date().getTime(), self.searchFormModel)
           .then(function (response) {
             self.options = response.data.data.content
           }).catch(error => {

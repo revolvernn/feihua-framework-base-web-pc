@@ -233,7 +233,7 @@
           if (row.photo.indexOf('http') === 0) {
             url = row.photo
           } else {
-            url = this.$config.file.downloadUrl + row.photo
+            url = this.$config.file.getDownloadUrl(row.photo)
           }
         } else {
           url = require('@/assets/index/headPic.jpg')

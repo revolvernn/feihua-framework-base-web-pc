@@ -3,9 +3,13 @@
   <div class="wrapper">
 
     <el-container>
+      <el-header>
+        <SiteSelect style="width:100%" v-model="searchFormModel.siteId"></SiteSelect>
+      </el-header>
+      <el-container>
       <el-aside width="200px">
         <el-scrollbar style="height: 100%;" wrapStyle="height:100%;overflow:auto;" >
-          <ChannelTree ref="lefttree" v-on:nodeClick="treeNodeClick"></ChannelTree>
+          <ChannelTree :site-id="searchFormModel.siteId" ref="lefttree" v-on:nodeClick="treeNodeClick"></ChannelTree>
          </el-scrollbar>
       </el-aside>
       <el-main>
@@ -15,12 +19,8 @@
               <el-form-item label="名称">
                 <el-input  v-model="searchFormModel.name"></el-input>
               </el-form-item>
-              <el-form-item label="站点">
-                <SiteSelect ref="siteinput"  v-model="searchFormModel.siteId">
-                </SiteSelect>
-              </el-form-item>
               <el-form-item label="父级">
-                <ChannelInputSelect ref="channelinput"  v-model="searchFormModel.parentId">
+                <ChannelInputSelect ref="channelinput" :site-id="searchFormModel.siteId"  v-model="searchFormModel.parentId">
                 </ChannelInputSelect>
               </el-form-item>
               <el-form-item>
@@ -33,8 +33,10 @@
         </el-collapse>
         <self-table :columns="columns" :tableData="tableData" :page="page" :table-loading="tableLoading" v-on:pageSizeChange="pageSizeChange" v-on:pageNoChange="pageNoChange"></self-table>
       </el-main>
+      </el-container>
     </el-container>
 
+    <site-select-dialog ref="siteSelectDialog" :on-success="siteSelectSuccess"/>
   </div>
 </template>
 
@@ -45,9 +47,11 @@
   import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import ChannelInputSelect from '@/views/cms/channel/ChannelInputSelect.vue'
   import SiteSelect from '@/views/cms/site/SiteSelect.vue'
+  import SiteSelectDialog from '@/views/cms/site/SiteSelectDialog'
   export default {
     name: 'Channel',
     components: {
+      SiteSelectDialog,
       SiteSelect,
       SelfTable,
       ChannelTree,
@@ -57,6 +61,11 @@
     data () {
       return {
         columns: [
+          {
+            name: 'id',
+            label: '栏目id',
+            width: '250'
+          },
           {
             name: 'name',
             label: '名称'
@@ -70,14 +79,33 @@
             label: '排序'
           },
           {
+            name: 'channelType',
+            label: '栏目分类',
+            dict: 'cms_channel_type',
+            dictValue: true
+          },
+          {
             name: 'parentId',
             label: '父级',
             formatter: this.dataParentFormatter
           },
           {
+            name: 'siteId',
+            label: '站点',
+            formatter: this.dataSiteFormatter
+          },
+          {
             label: '操作',
-            width: '150',
+            width: '200',
             buttons: [
+              {
+                label: '预览',
+                click: this.viewIndexAddress
+              },
+              {
+                label: '内容管理',
+                click: this.jumpToContent
+              },
               {
                 label: '编辑',
                 click: this.editTableRowClick
@@ -93,6 +121,7 @@
           pageNo: 1,
           dataNum: 0
         },
+        tableSite: {},
         tableParent: {},
         // 表格数据
         tableData: [],
@@ -103,6 +132,7 @@
           parentId: null,
           siteId: null,
           includeParent: true,
+          includeSite: true,
           pageable: true,
           pageNo: 1,
           pageSize: 10
@@ -110,7 +140,9 @@
       }
     },
     mounted () {
-      this.loadTableData(1)
+      if (this.searchFormModel.siteId) {
+        this.loadTableData(1)
+      }
     },
     methods: {
       // 点击树节点事件
@@ -130,6 +162,11 @@
       },
       // 加载表格数据
       loadTableData (pageNo, pageNoChange) {
+        // 如果不存在 siteId 弹窗选择site
+        if (!this.searchFormModel.siteId) {
+          this.$refs.siteSelectDialog.show()
+          return
+        }
         let self = this
         if (pageNo > 0) {
           if (pageNoChange) {
@@ -145,6 +182,7 @@
         this.$http.get('/cms/channels', self.searchFormModel)
           .then(function (response) {
             let content = response.data.data.content
+            self.tableSite = response.data.data.site
             self.tableParent = response.data.data.parent
             self.tableData = content
             self.page.dataNum = response.data.data.page.dataNum
@@ -194,7 +232,7 @@
       },
       addTableRowClick () {
         loadDataControl.add(this.$store, 'ChannelAddLoadData=true')
-        this.$router.push('/Main/Cms/ChannelAdd')
+        this.$router.push('/Main/Cms/ChannelAdd?siteId=' + this.searchFormModel.siteId)
       },
       dataParentFormatter (row) {
         let name = null
@@ -202,9 +240,50 @@
           name = this.tableParent[row.parentId].name || null
         }
         return name
+      },
+      dataSiteFormatter (row) {
+        let name = null
+        if (this.tableSite && this.tableSite[row.siteId]) {
+          name = this.tableSite[row.siteId].name || null
+        }
+        return name
+      },
+      siteSelectSuccess (siteId) {
+        this.searchFormModel.siteId = siteId
+      },
+      jumpToContent (index, row) {
+        this.$router.push('/Main/Cms/Content?siteId=' + row.siteId + '&channelId=' + row.id)
+      },
+      viewIndexAddress (index, row) {
+        let self = this
+        this.$http.get('/cms/channel/' + row.id + '/address')
+          .then(function (response) {
+            let site = response.data.data.content
+            let channel = response.data.data.channel
+            let url = site.sitePath + channel.channelUrl
+            self.$alert('<a href="' + url + '" target="_blank">' + url + '</a>', '栏目首页地址', {
+              confirmButtonText: '关闭',
+              dangerouslyUseHTMLString: true
+            })
+          })
       }
     },
     watch: {
+      'searchFormModel.siteId' () {
+        this.loadTableData(1)
+      }
+    },
+    // tab切换如果参数不一样，重新加载数据
+    beforeRouteEnter  (to, from, next) {
+      next(vm => {
+        // 通过 `vm` 访问组件实例
+        if (!vm.searchFormModel.siteId && !vm.$route.query.siteId) {
+          vm.loadTableData(1)
+        } else if (vm.searchFormModel.siteId !== vm.$route.query.siteId && vm.$route.query.siteId) {
+          vm.searchFormModel.siteId = vm.$route.query.siteId
+          vm.loadTableData(1)
+        }
+      })
     }
   }
 </script>

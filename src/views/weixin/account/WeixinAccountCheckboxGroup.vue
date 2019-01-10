@@ -41,7 +41,7 @@
       }
     },
     mounted () {
-      this.loadDict()
+      this.loadData()
     },
     methods: {
       handleFocus (event) {
@@ -56,8 +56,8 @@
       emitInput (val) {
         this.$emit('input', val)
       },
-      // 加载字典
-      loadDict () {
+      // 加载数据
+      loadData () {
         let self = this
         let type = 'weixin_publicplatform'
         if (self.miniprogram === true) {

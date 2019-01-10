@@ -3,9 +3,10 @@
     <el-popover
       ref="channelSelect"
       placement="right"
+      v-on:show="popoverShow"
       trigger="click">
       <el-scrollbar wrapStyle="max-height:500px;">
-        <ChannelTree v-on:nodeClick="areaTreeNodeClick" :loadData="false"></ChannelTree>
+        <ChannelTree ref="channelTree" v-on:nodeClick="treeNodeClick" :site-id="siteId" :loadData="false" :watch-site-id="false"></ChannelTree>
       </el-scrollbar>
     </el-popover>
     <el-input style="display: none;" value="" v-model="model">
@@ -24,12 +25,14 @@
     name: 'ChannelInputSelect',
     props: {
       value: '',
-      labelName: ''
+      labelName: '',
+      siteId: ''
     },
     data () {
       return {
         model: '',
-        name: ''
+        name: '',
+        firstShowPopover: false
       }
     },
     mounted () {
@@ -49,7 +52,7 @@
         this.name = val
         this.$emit('input', this.model)
       },
-      areaTreeNodeClick (data) {
+      treeNodeClick (data) {
         this.model = data.id
         this.name = data.name
         this.$emit('change', this.model)
@@ -72,6 +75,12 @@
           })
         } else {
           this.name = null
+        }
+      },
+      popoverShow () {
+        if (this.firstShowPopover === false) {
+          this.$refs.channelTree.loadTreeData()
+          this.firstShowPopover = true
         }
       }
     },

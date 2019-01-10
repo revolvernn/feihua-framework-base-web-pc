@@ -19,7 +19,7 @@
 <script>
   import { arrayToTree } from '@/utils/treeUtils.js'
   export default {
-    name: 'ChannelTree',
+    name: 'ContentCategoryTree',
     props: {
       loadData: {
         default: true
@@ -74,7 +74,7 @@
           return
         }
         self.treeLoading = true
-        this.$http.get('/cms/channels')
+        this.$http.get('/cms/content/categorys')
           .then(function (response) {
             let content = response.data.data.content
             self.treeData = content
