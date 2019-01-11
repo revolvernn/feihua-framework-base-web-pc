@@ -317,6 +317,12 @@ const router = new Router({
         },
         // 消息相关
         {
+          path: 'BaseLog',
+          name: 'BaseLog',
+          component: _import('baseLog/BaseLog')
+        },
+        // 消息相关
+        {
           path: 'Message',
           name: 'Message',
           component: _import('message/Message')
