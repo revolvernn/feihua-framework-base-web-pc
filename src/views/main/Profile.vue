@@ -5,12 +5,12 @@
     </el-col>
     <el-col :span="16" :class="isCollapse ? 'widthfull': ''">
       <el-row>
-        <el-col :span="18" :class="isCollapse ? 'hidden': ''" style="font-size: 0.75rem;color:azure;overflow: hidden;">
+        <el-col :span="18" :class="isCollapse ? 'hidden': ''" style="font-size: 0.75rem;color:azure;overflow: hidden; padding: 6px;">
           <i class="glyphicon glyphicon-user"></i>&nbsp;<span class="login-username" v-if="loginUser" @click="personalDetailDialogVisible = true"> {{loginUser.nickname}}</span>
           <br>
           <i class="glyphicon glyphicon-lock"></i>&nbsp;<span v-if="loginUser"> {{loginUser.additionalAttr.role.name}}</span>
         </el-col>
-        <el-col :span="6" :class="isCollapse ? 'widthfull': ''">
+        <el-col :span="6" :class="isCollapse ? 'widthfull': ''" style="padding: 2px;text-align: center;">
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
               <i class="el-icon-setting" style="color: rgb(255, 255, 255);"></i>
@@ -191,10 +191,10 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .head-pic{
-    width: 85%;
-    height: 85%;
+    width: 100%;
+    height: 100%;
     border: none;
-    border-radius: 50%;
+    border-radius: 10%;
   }
   .head-pic:hover{
     cursor: pointer;
