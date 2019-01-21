@@ -441,6 +441,47 @@ const router = new Router({
           name: 'CmsContentCategoryEdit',
           component: _import('cms/content/category/ContentCategoryEdit'),
           meta: { menu: {name: '内容分类编辑'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/Survey',
+          name: 'CmsSurvey',
+          component: _import('cms/survey/Survey')
+        },
+        {
+          path: 'Cms/SurveyAdd',
+          name: 'CmsSurveyAdd',
+          component: _import('cms/survey/SurveyAdd'),
+          meta: { menu: {name: '添加调查'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/SurveyEdit/:id',
+          name: 'CmsSurveyEdit',
+          component: _import('cms/survey/SurveyEdit'),
+          meta: { menu: {name: '编辑调查'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/Question/:id',
+          name: 'CmsQuestion',
+          component: _import('cms/survey/Question'),
+          meta: { menu: {name: '调查问题'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/QuestionAdd/:surveyId',
+          name: 'CmsQuestionAdd',
+          component: _import('cms/survey/QuestionAdd'),
+          meta: { menu: {name: '添加调查问题'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/QuestionEdit/:id',
+          name: 'CmsQuestionEdit',
+          component: _import('cms/survey/QuestionEdit'),
+          meta: { menu: {name: '编辑调查问题'}, keepAlive: true }
+        },
+        {
+          path: 'Cms/Options/:questionId',
+          name: 'CmsOptions',
+          component: _import('cms/survey/Options'),
+          meta: { menu: {name: '调查问题选项'}, keepAlive: true }
         }
       ]
     }
