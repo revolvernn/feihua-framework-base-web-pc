@@ -7,8 +7,11 @@
       <el-form-item label="问题类型" prop="type" required>
         <SelfDictSelect  v-model="form.type" type="question_type"></SelfDictSelect>
       </el-form-item>
+      <el-form-item label="是否换行" prop="br" v-if="isBr">
+        <SelfDictSelect  v-model="form.br" type="yes_no"></SelfDictSelect>
+      </el-form-item>
       <el-form-item label="排序" prop="sequence">
-        <el-input type="number" min="0" v-model="form.sequence"></el-input>
+        <el-input-number  :min="0" v-model="form.sequence" style="width: 100%;"></el-input-number>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="updateBtnClick" :loading="addLoading">修改</el-button>
@@ -99,7 +102,16 @@
         this.$refs['form'].resetFields()
       }
     },
-    watch: {},
+    watch: {
+      'form.type' (val) {
+        let self = this
+        if (val === 'radio' || val === 'checkbox') {
+          self.isBr = true
+        } else {
+          self.isBr = false
+        }
+      }
+    },
     // tab切换如果参数不一样，重新加载数据
     beforeRouteEnter (to, from, next) {
       next(vm => {

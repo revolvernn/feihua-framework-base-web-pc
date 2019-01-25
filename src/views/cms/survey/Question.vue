@@ -5,10 +5,10 @@
       <el-main>
         <el-card class="box-card">
           <div  class="text item">
-            调查主题：{{survey.title}}
+            <label>调查主题：</label>{{survey.title}}
           </div>
           <div  class="text item">
-            调查描述：{{survey.description}}
+            <label>调查描述：</label>{{survey.description}}
           </div>
         </el-card>
         <el-collapse value="1">
@@ -67,6 +67,11 @@
             label: '排序'
           },
           {
+            name: 'br',
+            dict: 'yes_no',
+            label: '换行'
+          },
+          {
             name: 'updateAt',
             label: '修改时间'
           },
@@ -101,6 +106,8 @@
           name: '',
           type: '',
           pageable: true,
+          orderable: true,
+          orderby: 'sequence-desc,update_at-desc',
           pageNo: 1,
           pageSize: 10
         }

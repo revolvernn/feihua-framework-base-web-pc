@@ -7,7 +7,7 @@
           <el-collapse-item title="查询条件" name="1">
             <el-form ref="searchForm" :model="searchFormModel" :inline="true" size="small">
               <el-form-item label="关键字" prop="title">
-                <el-input  v-model="searchFormModel.title"></el-input>
+                <el-input v-model="searchFormModel.title"></el-input>
               </el-form-item>
               <el-form-item label="调查状态" prop="status">
                 <self-dict-select v-model="searchFormModel.status" type="survey_status"></self-dict-select>
@@ -29,7 +29,8 @@
             </el-form>
           </el-collapse-item>
         </el-collapse>
-        <self-table :columns="columns" :tableData="tableData" :page="page" :table-loading="tableLoading" v-on:pageSizeChange="pageSizeChange" v-on:pageNoChange="pageNoChange"></self-table>
+        <self-table :columns="columns" :tableData="tableData" :page="page" :table-loading="tableLoading"
+                    v-on:pageSizeChange="pageSizeChange" v-on:pageNoChange="pageNoChange"></self-table>
       </el-main>
     </el-container>
     <el-dialog
@@ -46,6 +47,40 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <el-dialog
+      title="调查预览"
+      :visible.sync="preDialogVisible"
+      width="450px"
+      @before-close="preDialogVisible = false" style="word-break: break-all;">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix" v-if="surveyData.status=='2'">
+          <a :href="surveyData.url+'/survey/index.htm?id='+ surveyData.id " target="_blank" disabled>已发布问卷调查链接</a>
+        </div>
+        <div class="text item" style="margin-bottom: 16px;">
+          {{'调查主题： ' + surveyData.title }}
+        </div>
+        <div v-for="(q,index) in surveyData.questions" class="text item" :key="index" v-if="surveyData.questions"
+             style="margin: 5px 0 5px 16px;">
+          {{(index+1) + '. ' + q.name }}
+          <div v-if="q.type === 'text'" class="text item" style="margin: 5px 0 5px 16px;">
+            <el-input></el-input>
+          </div>
+          <div v-else-if="q.type === 'radio' && q.options" class="text item" style="margin: 5px 0 5px 16px;">
+            <div v-if="q.br === 'Y'" v-for="(r,rIndex) in q.options">
+              <el-radio v-model="q.id" :label="r.id" :key="rIndex">{{r.name}}</el-radio>
+            </div>
+            <el-radio v-else v-model="q.id" :label="r.id" :key="rIndex">{{r.name}}
+            </el-radio>
+          </div>
+          <div v-else-if="q.type === 'checkbox' && q.options" class="text item" style="margin: 5px 0 5px 16px;">
+            <div v-if="q.br === 'Y'" v-for="(o,cIndex) in q.options">
+              <el-checkbox :label="o.id" :key="cIndex">{{o.name}}</el-checkbox>
+            </div>
+            <el-checkbox v-else :label="o.id" :key="cIndex">{{o.name}}</el-checkbox>
+          </div>
+        </div>
+      </el-card>
+    </el-dialog>
   </div>
 </template>
 
@@ -54,6 +89,7 @@
   import SelfTable from '@/components/SelfTable.vue'
   import loadDataControl from '@/utils/storeLoadDataControlUtils.js'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
+
   export default {
     name: 'survey',
     components: {
@@ -63,6 +99,13 @@
     },
     data () {
       return {
+        preDialogVisible: false,
+        surveyData: {
+          title: '',
+          url: '#',
+          status: '',
+          questions: []
+        },
         addLoading: false,
         rowDialogVisible: false,
         surveyForm: {
@@ -163,6 +206,8 @@
           status: '',
           type: '',
           pageable: true,
+          orderable: true,
+          orderby: 'sequence-desc,update_at-desc,status-asc',
           pageNo: 1,
           pageSize: 10
         }
@@ -213,10 +258,12 @@
       },
       previewSurvey (index, row) {
         let self = this
-        self.$alert('<a href="#" target="_blank">问卷调查预览URL</a>', '问卷调查预览', {
-          confirmButtonText: '关闭',
-          dangerouslyUseHTMLString: true
-        })
+        self.$http.get('/cms/survey/' + row.id + '/questions')
+          .then(function (response) {
+            let content = response.data.data.content
+            self.surveyData = content
+          })
+        self.preDialogVisible = true
       },
       // 发布调查
       publishSurvey () {
@@ -290,30 +337,32 @@
         })
       }
     },
-    watch: {
-    }
+    watch: {}
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .wrapper .el-collapse{
+  .wrapper .el-collapse {
     padding: 0 10px;
   }
-.el-main{
-  padding:0;
-}
-.el-aside{
-  border-right: 1px solid #e6ebf5;
-}
-.wrapper,.el-container{
-  height:100%;
-}
+
+  .el-main {
+    padding: 0;
+  }
+
+  .el-aside {
+    border-right: 1px solid #e6ebf5;
+  }
+
+  .wrapper, .el-container {
+    height: 100%;
+  }
 
 </style>
 <style>
-.el-collapse-item__arrow {
-  /* 由于用了rotate 这个东西不是个正方形所以改变角度的时候会出现滚动条 */
-  margin-right: 20px;
-}
+  .el-collapse-item__arrow {
+    /* 由于用了rotate 这个东西不是个正方形所以改变角度的时候会出现滚动条 */
+    margin-right: 20px;
+  }
 </style>

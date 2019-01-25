@@ -5,13 +5,16 @@
       <el-main>
         <el-card class="box-card">
           <div  class="text item">
-            调查主题：{{survey.title}}
+            <label>调查主题：</label>{{survey.title}}
           </div>
           <div  class="text item">
-            调查描述：{{survey.description}}
+            <label>调查描述：</label>{{survey.description}}
           </div>
           <div  class="text item">
-            问题名称：{{question.name}}
+            <label>问题名称：</label>{{question.name}}
+          </div>
+          <div  class="text item">
+            <label>问题类型：</label>{{question.type}}
           </div>
         </el-card>
         <el-collapse value="1">
@@ -52,6 +55,7 @@
   import SelfPage from '@/components/SelfPage.vue'
   import SelfTable from '@/components/SelfTable.vue'
   import SelfDictSelect from '@/components/SelfDictSelect.vue'
+  import { getDictByValueSync } from '@/utils/dictUtils.js'
   export default {
     name: 'Question',
     components: {
@@ -75,13 +79,13 @@
           ]
         },
         question: {
-          surveyId: null,
-          name: null,
-          type: null
+          surveyId: '',
+          name: '',
+          type: ''
         },
         survey: {
-          title: null,
-          description: null
+          title: '',
+          description: ''
         },
         columns: [
           {
@@ -150,6 +154,8 @@
             self.question.surveyId = content.surveyId
             self.question.name = content.name
             self.question.description = content.description
+            let d = getDictByValueSync(self, 'question_type', content.type)
+            self.question.type = (d ? d.name : null)
             self.loadSurvey(content.surveyId)
           })
       },
