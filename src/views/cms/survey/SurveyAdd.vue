@@ -10,7 +10,7 @@
       <el-form-item label="调查类型" prop="type" required>
         <SelfDictSelect  v-model="form.type" type="survey_type"></SelfDictSelect>
       </el-form-item>
-      <el-form-item label="调查时间" prop="myDateRange" required>
+      <el-form-item label="调查时间" prop="myDateRange">
         <el-date-picker
           :picker-options="pickerOptions"
           v-model="form.myDateRange"
@@ -21,7 +21,7 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item label="排序" prop="sequence">
-        <el-input type="number" min="0" v-model="form.sequence"></el-input>
+        <el-input-number  :min="0" v-model="form.sequence" style="width: 100%;"></el-input-number>
       </el-form-item>
       <el-form-item label="注册可参与" prop="register" required>
         <SelfDictSelect  v-model="form.register" type="yes_no"></SelfDictSelect>
@@ -82,9 +82,6 @@
           ],
           repeatLimit: [
             {required: true, message: '必填', trigger: 'change'}
-          ],
-          myDateRange: [
-            {required: true, message: '必填', trigger: 'change'}
           ]
         }
       }
@@ -103,8 +100,10 @@
               survey.title = self.form.title
               survey.description = self.form.title
               survey.type = self.form.type
-              survey.startTime = self.form.myDateRange[0]
-              survey.endTime = self.form.myDateRange[1]
+              if (self.form.myDateRange.length === 2) {
+                survey.startTime = self.form.myDateRange[0]
+                survey.endTime = self.form.myDateRange[1]
+              }
               survey.sequence = self.form.sequence
               survey.register = self.form.register
               survey.repeatLimit = self.form.repeatLimit

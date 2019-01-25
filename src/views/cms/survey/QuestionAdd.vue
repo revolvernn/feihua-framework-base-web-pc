@@ -11,7 +11,7 @@
         <SelfDictSelect  v-model="form.br" type="yes_no"></SelfDictSelect>
       </el-form-item>
       <el-form-item label="排序" prop="sequence">
-        <el-input type="number" min="0" v-model="form.sequence"></el-input>
+        <el-input-number  :min="0" v-model="form.sequence" style="width: 100%;"></el-input-number>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="addBtnClick" :loading="addLoading">添加</el-button>
