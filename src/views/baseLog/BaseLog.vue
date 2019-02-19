@@ -26,8 +26,8 @@
       title="提示"
       :visible.sync="rowDialogVisible"
       width="50%"
-      :before-close="handleClose" style="word-break: break-all;">
-      <span>{{rowParams}}</span>
+      @before-close="rowDialogVisible = false"  style="word-break: break-all;">
+      <span v-html="rowParams"></span>
       <span slot="footer" class="dialog-footer">
   </span>
     </el-dialog>
@@ -161,7 +161,10 @@
       rowParamsInfo (index, row) {
         let self = this
         self.rowDialogVisible = true
-        self.rowParams = row.params
+        let b = {}
+        b.p = row.params || ''
+        // eslint-disable-next-line
+        self.rowParams = b.p.replace(/\,/g, ',<br>').replace(/\)/g, ')<br/>')
       },
       // tablb 表格删除行
       deleteTableRowClick (index, row) {
