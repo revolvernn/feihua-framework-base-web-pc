@@ -277,88 +277,88 @@
           </el-date-picker>
         </el-form-item>
       </template>
-      <template v-if="form.contentType == 'vedio'">
-        <el-form-item label="视频url" prop="vedio.url" :rules="{required: (vedioOtherPlayerHasValue() == false), message: '必填或填写一个第三方播放', trigger: 'blur'}">
+      <template v-if="form.contentType == 'video'">
+        <el-form-item label="视频url" prop="video.url" :rules="{required: (videoOtherPlayerHasValue() == false), message: '必填或填写一个第三方播放', trigger: 'blur'}">
 
-          <el-input  v-model="form.vedio.url" clearable>
-            <el-button slot="prepend" icon="el-icon-upload2" @click="uploadVedioBtnClick">上传</el-button>
+          <el-input  v-model="form.video.url" clearable>
+            <el-button slot="prepend" icon="el-icon-upload2" @click="uploadVideoBtnClick">上传</el-button>
           </el-input>
 
         </el-form-item>
-        <el-form-item label="视频描述" prop="vedio.description">
-          <el-input  v-model="form.vedio.description"></el-input>
+        <el-form-item label="视频描述" prop="video.description">
+          <el-input  v-model="form.video.description"></el-input>
         </el-form-item>
 
-        <el-form-item label="视频图片地址" prop="vedio.imageUrl" >
-          <el-input  v-model="form.vedio.imageUrl" clearable>
-            <el-button size="mini" slot="prepend"  icon="el-icon-upload2" @click="uploadVedioImageBtnClick">上传图片</el-button>
+        <el-form-item label="视频图片地址" prop="video.imageUrl" >
+          <el-input  v-model="form.video.imageUrl" clearable>
+            <el-button size="mini" slot="prepend"  icon="el-icon-upload2" @click="uploadVideoImageBtnClick">上传图片</el-button>
           </el-input>
           <br/>
-          <img class="my-image-preview" v-if="form.vedio.imageUrl" :src="$config.file.getDownloadUrl(form.vedio.imageUrl)"/>
+          <img class="my-image-preview" v-if="form.video.imageUrl" :src="$config.file.getDownloadUrl(form.video.imageUrl)"/>
         </el-form-item>
-        <el-form-item label="视频图片描述" prop="vedio.imageDes">
-          <el-input  v-model="form.vedio.imageDes"></el-input>
+        <el-form-item label="视频图片描述" prop="video.imageDes">
+          <el-input  v-model="form.video.imageDes"></el-input>
         </el-form-item>
-        <el-form-item label="视频时长" prop="vedio.imageDes">
-          <el-input  v-model="form.vedio.duration"></el-input>
+        <el-form-item label="视频时长" prop="video.imageDes">
+          <el-input  v-model="form.video.duration"></el-input>
         </el-form-item>
-        <el-form-item label="视频播放器" prop="vedio.player" :rules="{required: (vedioOtherPlayerHasValue() == false), message: '必填或填写一个第三方播放', trigger: 'blur'}">
-          <SelfDictSelect  v-model="form.vedio.player" type="cms_vedio_player"></SelfDictSelect>
+        <el-form-item label="视频播放器" prop="video.player" :rules="{required: (videoOtherPlayerHasValue() == false), message: '必填或填写一个第三方播放', trigger: 'blur'}">
+          <SelfDictSelect  v-model="form.video.player" type="cms_video_player"></SelfDictSelect>
         </el-form-item>
         <el-form-item label="第三方播放">
           <el-switch
-            v-model="enableVedioOtherPlayer"
+            v-model="enableVideoOtherPlayer"
             active-text="点击展开">
           </el-switch>
         </el-form-item>
-        <template v-if="enableVedioOtherPlayer">
-          <template  v-for="(item,index) in form.vedioOtherPlayer">
+        <template v-if="enableVideoOtherPlayer">
+          <template  v-for="(item,index) in form.videoOtherPlayer">
 
-            <el-form-item :label="'三方播放名称' + index" :prop="'vedioOtherPlayer.' + index + '.player'">
+            <el-form-item :label="'三方播放名称' + index" :prop="'videoOtherPlayer.' + index + '.player'">
               <el-input  v-model="item.player">
               </el-input>
             </el-form-item>
-            <el-form-item :label="'三方播放地址' + index" :prop="'vedioOtherPlayer.' + index + '.url'" >
+            <el-form-item :label="'三方播放地址' + index" :prop="'videoOtherPlayer.' + index + '.url'" >
               <el-input  v-model="item.url">
               </el-input>
             </el-form-item>
             <el-form-item  v-if="index >= 0">
-              <el-button size="mini" icon="el-icon-delete" @click="removeVedioOtherPlayerBtnClick(index)">删除{{item.player}}</el-button>
+              <el-button size="mini" icon="el-icon-delete" @click="removeVideoOtherPlayerBtnClick(index)">删除{{item.player}}</el-button>
             </el-form-item>
           </template>
           <el-form-item>
-            <el-button size="mini" icon="el-icon-plus" type="primary" @click="addVedioOtherPlayerForm">添加三方播放</el-button>
+            <el-button size="mini" icon="el-icon-plus" type="primary" @click="addVideoOtherPlayerForm">添加三方播放</el-button>
           </el-form-item>
         </template>
-        <el-form-item label="视频导演" prop="vedio.director">
-          <el-input  v-model="form.vedio.director"></el-input>
+        <el-form-item label="视频导演" prop="video.director">
+          <el-input  v-model="form.video.director"></el-input>
         </el-form-item>
-        <el-form-item label="视频主演" prop="vedio.performer">
-          <el-input  v-model="form.vedio.performer"></el-input>
+        <el-form-item label="视频主演" prop="video.performer">
+          <el-input  v-model="form.video.performer"></el-input>
         </el-form-item>
-        <el-form-item label="视频语言" prop="vedio.language">
-          <el-input  v-model="form.vedio.language"></el-input>
+        <el-form-item label="视频语言" prop="video.language">
+          <el-input  v-model="form.video.language"></el-input>
         </el-form-item>
-        <el-form-item label="国家/地区" prop="vedio.region">
-          <el-input  v-model="form.vedio.region"></el-input>
+        <el-form-item label="国家/地区" prop="video.region">
+          <el-input  v-model="form.video.region"></el-input>
         </el-form-item>
-        <el-form-item label="总季数" prop="vedio.seasonCount">
-          <el-input-number v-model="form.vedio.seasonCount" :min="1" :max="1000" controls-position="right"></el-input-number>
+        <el-form-item label="总季数" prop="video.seasonCount">
+          <el-input-number v-model="form.video.seasonCount" :min="1" :max="1000" controls-position="right"></el-input-number>
         </el-form-item>
-        <el-form-item label="当前第几季" prop="vedio.season">
-          <el-input-number v-model="form.vedio.season" :min="1" :max="1000" controls-position="right"></el-input-number>
+        <el-form-item label="当前第几季" prop="video.season">
+          <el-input-number v-model="form.video.season" :min="1" :max="1000" controls-position="right"></el-input-number>
 
         </el-form-item>
-        <el-form-item label="总集数" prop="vedio.spisodeCount">
-          <el-input-number v-model="form.vedio.spisodeCount" :min="1" :max="1000" controls-position="right"></el-input-number>
+        <el-form-item label="总集数" prop="video.spisodeCount">
+          <el-input-number v-model="form.video.spisodeCount" :min="1" :max="1000" controls-position="right"></el-input-number>
 
         </el-form-item>
-        <el-form-item label="当前第几集" prop="vedio.spisode">
-          <el-input-number v-model="form.vedio.spisode" :min="1" :max="1000" controls-position="right"></el-input-number>
+        <el-form-item label="当前第几集" prop="video.spisode">
+          <el-input-number v-model="form.video.spisode" :min="1" :max="1000" controls-position="right"></el-input-number>
         </el-form-item>
-        <el-form-item label="年代" prop="vedio.years">
+        <el-form-item label="年代" prop="video.years">
           <el-date-picker
-            v-model="form.vedio.years"
+            v-model="form.video.years"
             type="year"
             value-format="yyyy"
             placeholder="选择年代">
@@ -462,7 +462,7 @@
             region: null,
             years: null
           },
-          vedio: {
+          video: {
             url: null,
             description: null,
             imageUrl: null,
@@ -480,7 +480,7 @@
             spisodeCount: 1,
             years: null
           },
-          vedioOtherPlayer: [],
+          videoOtherPlayer: [],
           gallerys: []
         },
         // 展开封面图片
@@ -488,7 +488,7 @@
         // 展开封面图片
         enableAttachment: false,
         // 第三方播放
-        enableVedioOtherPlayer: false,
+        enableVideoOtherPlayer: false,
         addLoading: false,
         formRules: {
           title: [
@@ -741,7 +741,7 @@
           }
         })
       },
-      uploadVedioBtnClick () {
+      uploadVideoBtnClick () {
         let _self = this
         this.$refs.commonUpload.showWithOptions({
           title: '视频',
@@ -749,14 +749,14 @@
           accept: null,
           onSuccess: function (res, file, fileList) {
             let content = res.data.content
-            _self.form.vedio.url = content.path
-            _self.form.vedio.ext = content.ext
-            _self.form.vedio.filename = content.filename
-            _self.form.vedio.size = content.size
+            _self.form.video.url = content.path
+            _self.form.video.ext = content.ext
+            _self.form.video.filename = content.filename
+            _self.form.video.size = content.size
           }
         })
       },
-      uploadVedioImageBtnClick () {
+      uploadVideoImageBtnClick () {
         let _self = this
         this.$refs.commonUpload.showWithOptions({
           title: '视频图片',
@@ -764,27 +764,27 @@
           accept: 'image/gif, image/jpeg, image/png',
           onSuccess: function (res, file, fileList) {
             let content = res.data.content
-            _self.form.vedio.imageUrl = content.path
+            _self.form.video.imageUrl = content.path
           }
         })
       },
-      vedioOtherPlayerHasValue () {
+      videoOtherPlayerHasValue () {
         let r = false
-        for (let i = 0; i < this.form.vedioOtherPlayer.length; i++) {
-          if (this.form.vedioOtherPlayer[i].url) {
+        for (let i = 0; i < this.form.videoOtherPlayer.length; i++) {
+          if (this.form.videoOtherPlayer[i].url) {
             r = true
             break
           }
         }
         return r
       },
-      removeVedioOtherPlayerBtnClick (index) {
+      removeVideoOtherPlayerBtnClick (index) {
         if (index !== -1) {
-          this.form.vedioOtherPlayer.splice(index, 1)
+          this.form.videoOtherPlayer.splice(index, 1)
         }
       },
-      addVedioOtherPlayerForm () {
-        this.form.vedioOtherPlayer.push(
+      addVideoOtherPlayerForm () {
+        this.form.videoOtherPlayer.push(
           {
             player: null,
             url: null

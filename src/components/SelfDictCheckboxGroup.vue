@@ -97,12 +97,15 @@
             this.model = []
           }
         } else {
-          this.model = this.value
+          if (this.value) {
+            this.model = this.value
+          }
         }
       }
     },
     watch: {
       value (val) {
+        console.log(val)
         this.adapter()
       }
     }
