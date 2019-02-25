@@ -51,9 +51,6 @@
       },
       // 加载字典
       loadTemplate () {
-        if (!this.siteId) {
-          return
-        }
         let self = this
         if (self.type) {
           let url = null
